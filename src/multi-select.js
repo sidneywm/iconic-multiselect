@@ -249,6 +249,16 @@ class IconicMultiSelect {
   }
 
   /**
+   * Removes an option from the list
+   * @param { string } value
+   * @private
+   */
+  _removeOptionFromList(value) {
+    const optionDom = document.querySelector(`span[data-value="${value}"]`);
+    optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
+  }
+
+  /**
    * Renders the multiselect options list view.
    * @private
    */
@@ -291,16 +301,6 @@ class IconicMultiSelect {
     `;
 
     this.selectContainer.insertAdjacentHTML("afterend", html);
-  }
-
-  /**
-   * Removes an option from the list
-   * @param { string } value
-   * @private
-   */
-  _removeOptionFromList(value) {
-    const optionDom = document.querySelector(`span[data-value="${value}"]`);
-    optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
   }
 
   /**
