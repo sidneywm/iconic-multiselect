@@ -77,6 +77,9 @@ Finally, target the `id` of your `select` tag in the options and initialize the 
 
 \* This option is compulsory
 
+#### `customCss`
+If set to `true`, the component will not inject its own CSS in the `<head>` tag.
+
 ## Author
 
 - [Sidney Wimart](https://github.com/sidneywm)
