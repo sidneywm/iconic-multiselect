@@ -75,7 +75,7 @@ Finally, target the `id` of your `select` tag in the options and initialize the 
 | textField    | `null`               | `string`      |
 | valueField   | `null`               | `string`      |
 
-\* This option is compulsory.
+\* This option is compulsory
 
 ## Author
 
