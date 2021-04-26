@@ -80,6 +80,35 @@ Finally, target the `id` of your `select` tag in the options and initialize the 
 #### `customCss`
 If set to `true`, the component will not inject its own CSS in the `<head>` tag.
 
+#### `data*`
+The component can be configured with data set directly in the option fields. It must be an `Array` of `Objects`.
+
+#### `noData`
+Text to display if there is no data found in the `select` tag or in the data field.
+
+#### `noResults`
+Text to display if there is no results when the option list is filtered.
+
+#### `placeholder`
+Text to display in the input placeholder.
+
+#### `select`
+The `select` tag from which the component is initialized.
+
+#### `textField`
+The field of the data object that provides the text content.
+
+#### `valueField`
+The field of the data object that provides the value.
+
+\* **IMPORTANT:** When `data` is provided, `valueField` and `textField` should also be set.
+
+
+
+
+
+
+
 ## Author
 
 - [Sidney Wimart](https://github.com/sidneywm)
