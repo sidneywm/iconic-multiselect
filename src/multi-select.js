@@ -91,6 +91,11 @@ class IconicMultiSelect {
     }
   }
 
+  /**
+   * Add an option to the selection list.
+   * @param { Object: { text: string; value: string; }} option
+   * @private
+   */
   _addOptionToList(option) {
     const html = `<span class="${this.prefix + "multiselect__selected"}" data-value="${option.value}">${
       option.text
@@ -122,7 +127,7 @@ class IconicMultiSelect {
   }
 
   /**
-   * Dispatches new events
+   * Dispatches new events.
    * @param { object : { action: string; selection: { option: string; text: string; }[]; value?: string; } } event
    * @private
    */
@@ -162,7 +167,7 @@ class IconicMultiSelect {
   }
 
   /**
-   * Filters user input
+   * Filters user input.
    * @param { string } value
    * @private
    */
@@ -182,6 +187,11 @@ class IconicMultiSelect {
     this._showNoResults(!hasResults);
   }
 
+  /**
+   * Handles the backspace key event - Deletes the preceding option in the selection list.
+   * @param { Event } e
+   * @private
+   */
   _handleBackspace(e) {
     if (e.keyCode === 8 && e.target.value === "") {
       const lastSelectedOption =
@@ -195,7 +205,7 @@ class IconicMultiSelect {
   }
 
   /**
-   * Shows clear selection button if some options are selected
+   * Shows clear selection button if some options are selected.
    * @private
    */
   _handleClearSelectionBtn() {
@@ -237,7 +247,7 @@ class IconicMultiSelect {
   }
 
   /**
-   * Shows the placeholder if no options are selected
+   * Shows the placeholder if no options are selected.
    * @private
    */
   _handlePlaceholder() {
@@ -249,7 +259,7 @@ class IconicMultiSelect {
   }
 
   /**
-   * Removes an option from the list
+   * Removes an option from the list.
    * @param { string } value
    * @private
    */
@@ -304,7 +314,16 @@ class IconicMultiSelect {
   }
 
   /**
-   * Shows a no results message
+   * Shows a no data message.
+   * @param { boolean } condition
+   * @private
+   */
+  _showNoData(condition) {
+    return condition ? `<p class="${this.prefix}multiselect__options--no-data">${this.noData}</p>` : "";
+  }
+
+  /**
+   * Shows a no results message.
    * @param { boolean } condition
    * @private
    */
@@ -319,16 +338,7 @@ class IconicMultiSelect {
   }
 
   /**
-   * Shows a no data message
-   * @param { boolean } condition
-   * @private
-   */
-  _showNoData(condition) {
-    return condition ? `<p class="${this.prefix}multiselect__options--no-data">${this.noData}</p>` : "";
-  }
-
-  /**
-   * Injects required CSS class properties in the <head></head>, if customCss param is not true
+   * Injects required CSS class properties in the <head></head>, if customCss param is not true.
    * @private
    */
   _injectCss() {
