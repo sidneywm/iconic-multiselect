@@ -129,7 +129,7 @@ The field of the data object that provides the value.
 
 ## Contributing
 
-Iconic Multiseclect is an open-source project. Contributions of any kind are welcome and appreciated. Feel free to open an issue or request a feature. Pull requests are also welcome.
+Iconic Multiselect is an open-source project. Contributions of any kind are welcome and appreciated. Feel free to open an issue or request a feature. Pull requests are also welcome.
 
 ## Author
 
