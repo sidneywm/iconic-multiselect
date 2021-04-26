@@ -71,9 +71,11 @@ Finally, target the `id` of your `select` tag in the options and initialize the 
 | noData       | `No data found.`     | `string`      |
 | noResults    | `No results found.`  | `string`      |
 | placeholder  | `Select...`          | `string`      |
-| select       | `none`               | `string`      |
+| select*      | `none`               | `string`      |
 | textField    | `null`               | `string`      |
 | valueField   | `null`               | `string`      |
+
+\* This option is compulsory.
 
 ## Author
 
