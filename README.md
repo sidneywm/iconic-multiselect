@@ -111,7 +111,11 @@ The field of the data object that provides the value.
 
     const multiSelect = new IconicMultiSelect({
       customCss: true,
-      data: [{ valueName: "bread", itemName: 'Bread'}, { valueName: "rice", itemName: 'Rice'}, { valueName: "pasta", itemName: 'Pasta'}],
+      data: [
+        { valueName: "bread", itemName: 'Bread'}, 
+        { valueName: "rice", itemName: 'Rice'}, 
+        { valueName: "pasta", itemName: 'Pasta'}
+      ],
       noData: "No food item found.",
       noResults: "No results found in this list.",
       placeholder: "Select an food item...",
