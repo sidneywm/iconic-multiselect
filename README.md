@@ -1,6 +1,6 @@
 # Iconic Multiselect
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Version](https://img.shields.io/github/package-json/v/sidneywm/iconic-multiselect)](https://github.com/sidneywm/iconic-multiselect)
 
 <p align="center">A multiselect component written in pure JavaScript - Also compatible with IE11</p>
 
