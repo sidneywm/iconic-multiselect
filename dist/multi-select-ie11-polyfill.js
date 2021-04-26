@@ -1996,7 +1996,11 @@ Object.defineProperty(Symbol, 'species', { value: Symbol('species') });
 })
 ('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
 
-"use strict";
+if (window.NodeList && !NodeList.prototype.forEach) {
+	NodeList.prototype.forEach = Array.prototype.forEach;
+}
+
+  "use strict";
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
@@ -2019,30 +2023,31 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*!
- * IconicMultiSelect v0.1.0
+ * IconicMultiSelect v0.2.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
-if (window.NodeList && !NodeList.prototype.forEach) {
-  NodeList.prototype.forEach = Array.prototype.forEach;
-}
+
 var IconicMultiSelect = function () {
   function IconicMultiSelect(_ref) {
-    var select = _ref.select,
-        placeholder = _ref.placeholder,
-        customCss = _ref.customCss,
+    var customCss = _ref.customCss,
+        data = _ref.data,
         noData = _ref.noData,
-        noResults = _ref.noResults;
+        noResults = _ref.noResults,
+        placeholder = _ref.placeholder,
+        select = _ref.select,
+        textField = _ref.textField,
+        valueField = _ref.valueField;
 
     _classCallCheck(this, IconicMultiSelect);
 
-    _defineProperty(this, "prefix", "iconic" + Math.floor(1000 + Math.random() * 9000) + "-");
-
     _defineProperty(this, "customCss", void 0);
 
-    _defineProperty(this, "selectContainer", void 0);
+    _defineProperty(this, "data", void 0);
 
-    _defineProperty(this, "placeholder", void 0);
+    _defineProperty(this, "domElements", {});
+
+    _defineProperty(this, "event", function () {});
 
     _defineProperty(this, "noData", void 0);
 
@@ -2050,28 +2055,32 @@ var IconicMultiSelect = function () {
 
     _defineProperty(this, "options", []);
 
+    _defineProperty(this, "placeholder", void 0);
+
+    _defineProperty(this, "prefix", "iconic" + Math.floor(1000 + Math.random() * 9000) + "-");
+
+    _defineProperty(this, "selectContainer", void 0);
+
     _defineProperty(this, "selectedOptions", []);
 
-    _defineProperty(this, "domElements", {});
+    _defineProperty(this, "textField", void 0);
 
-    _defineProperty(this, "event", function () {});
+    _defineProperty(this, "valueField", void 0);
 
-    this.selectContainer = document.querySelector(select);
     this.customCss = customCss;
-    this.placeholder = placeholder !== null && placeholder !== void 0 ? placeholder : "Select...";
+    this.data = data !== null && data !== void 0 ? data : [];
     this.noData = noData !== null && noData !== void 0 ? noData : "No data found.";
     this.noResults = noResults !== null && noResults !== void 0 ? noResults : "No results found.";
+    this.placeholder = placeholder !== null && placeholder !== void 0 ? placeholder : "Select...";
+    this.selectContainer = document.querySelector(select);
+    this.textField = textField !== null && textField !== void 0 ? textField : null;
+    this.valueField = valueField !== null && valueField !== void 0 ? valueField : null;
   }
   _createClass(IconicMultiSelect, [{
     key: "init",
     value: function init() {
       if (this.selectContainer && this.selectContainer.nodeName === "SELECT") {
-        this.options = Array.from(this.selectContainer.options).map(function (option) {
-          return {
-            text: option.text,
-            value: option.value
-          };
-        });
+        this.options = this._getDataFromSettings() || this._getDataFromSelectTag();
 
         this._injectCss();
 
@@ -2189,6 +2198,39 @@ var IconicMultiSelect = function () {
       this._showNoResults(!hasResults);
     }
   }, {
+    key: "_getDataFromSelectTag",
+    value: function _getDataFromSelectTag() {
+      return Array.from(this.selectContainer.options).map(function (option) {
+        return {
+          text: option.text,
+          value: option.value
+        };
+      });
+    }
+  }, {
+    key: "_getDataFromSettings",
+    value: function _getDataFromSettings() {
+      var _this4 = this;
+
+      if (this.data.length > 0 && this.valueField && this.textField) {
+        var isValueFieldValid = typeof this.valueField === "string";
+        var isTextFieldValid = typeof this.textField === "string";
+
+        if (!isValueFieldValid || !isTextFieldValid) {
+          throw new Error("textField and valueField must be of type string");
+        }
+
+        return this.data.map(function (item) {
+          return {
+            value: item[_this4.valueField],
+            text: item[_this4.textField]
+          };
+        });
+      } else {
+        return null;
+      }
+    }
+  }, {
     key: "_handleBackspace",
     value: function _handleBackspace(e) {
       if (e.keyCode === 8 && e.target.value === "") {
@@ -2216,11 +2258,11 @@ var IconicMultiSelect = function () {
       var dispatchEvent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
       if (this.selectedOptions.some(function (el) {
-        return el.value === target.dataset.value;
+        return el.value == target.dataset.value;
       })) {
         target.classList.remove("".concat(this.prefix, "multiselect__options--selected"));
         this.selectedOptions = this.selectedOptions.filter(function (el) {
-          return el.value !== target.dataset.value;
+          return el.value != target.dataset.value;
         });
 
         this._removeOptionFromList(target.dataset.value);
@@ -2232,7 +2274,7 @@ var IconicMultiSelect = function () {
         });
       } else {
         var option = this.options.find(function (el) {
-          return el.value === target.dataset.value;
+          return el.value == target.dataset.value;
         });
         target.classList.add("".concat(this.prefix, "multiselect__options--selected"));
         this.selectedOptions = [].concat(_toConsumableArray(this.selectedOptions), [option]);
@@ -2260,6 +2302,12 @@ var IconicMultiSelect = function () {
       }
     }
   }, {
+    key: "_removeOptionFromList",
+    value: function _removeOptionFromList(value) {
+      var optionDom = document.querySelector("span[data-value=\"".concat(value, "\"]"));
+      optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
+    }
+  }, {
     key: "_renderOptionsList",
     value: function _renderOptionsList() {
       var html = "\n        <div style=\"display: none;\" class=\"".concat(this.prefix, "multiselect__options\">\n          <ul>\n          ").concat(this.options.length > 0 ? this.options.map(function (option) {
@@ -2275,10 +2323,9 @@ var IconicMultiSelect = function () {
       this.selectContainer.insertAdjacentHTML("afterend", html);
     }
   }, {
-    key: "_removeOptionFromList",
-    value: function _removeOptionFromList(value) {
-      var optionDom = document.querySelector("span[data-value=\"".concat(value, "\"]"));
-      optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
+    key: "_showNoData",
+    value: function _showNoData(condition) {
+      return condition ? "<p class=\"".concat(this.prefix, "multiselect__options--no-data\">").concat(this.noData, "</p>") : "";
     }
   }, {
     key: "_showNoResults",
@@ -2291,11 +2338,6 @@ var IconicMultiSelect = function () {
       } else {
         dom && dom.parentNode && dom.parentNode.removeChild(dom);
       }
-    }
-  }, {
-    key: "_showNoData",
-    value: function _showNoData(condition) {
-      return condition ? "<p class=\"".concat(this.prefix, "multiselect__options--no-data\">").concat(this.noData, "</p>") : "";
     }
   }, {
     key: "_injectCss",

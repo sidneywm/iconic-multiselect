@@ -2880,3 +2880,9 @@ Object.defineProperty(Symbol, 'species', { value: Symbol('species') });
 }());
 })
 ('object' === typeof window && window || 'object' === typeof self && self || 'object' === typeof global && global || {});
+
+// Add the forEach method to the NodeList interface if not included (for IE11 compatibility)
+if (window.NodeList && !NodeList.prototype.forEach) {
+	NodeList.prototype.forEach = Array.prototype.forEach;
+}
+  
