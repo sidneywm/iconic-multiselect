@@ -60,6 +60,20 @@ Finally, target the `id` of your `select` tag in the options and initialize the 
     multiSelect.init();
 </script>
 ```
+## Configuration
+
+### Overview
+
+| Option       | Default              | Type          |
+| :---         |     :---:            |     :---:     |
+| customCss    | `false`              | `boolean`     |
+| data         | `undefined`          | `Object[]`    |
+| noData       | `No data found.`     | `string`      |
+| noResults    | `No results found.`  | `string`      |
+| placeholder  | `Select...`          | `string`      |
+| select       | `none`               | `string`      |
+| textField    | `null`               | `string`      |
+| valueField   | `null`               | `string`      |
 
 ## Author
 
