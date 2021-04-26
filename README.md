@@ -2,4 +2,4 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
 
-A multiselect component written in Pure JS - Also compatible with IE11
+A multiselect component written in pure JavaScript - Also compatible with IE11
