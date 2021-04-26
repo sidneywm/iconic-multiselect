@@ -1,5 +1,5 @@
 /*!
- * IconicMultiSelect v0.0.1
+ * IconicMultiSelect v0.1.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
@@ -10,7 +10,7 @@ if (window.NodeList && !NodeList.prototype.forEach) {
 }
 
 /**
- * @version IconicMultiSelect v0.0.1
+ * @version IconicMultiSelect v0.1.0
  * @licence  MIT
  */
 class IconicMultiSelect {
