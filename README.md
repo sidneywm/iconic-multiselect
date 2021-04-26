@@ -58,11 +58,12 @@ Finally, target the `id` of your `<select>` tag in the options and initialize th
     });
 
     multiSelect.init();
+
 </script>
 ```
 ## Configuration
 
-### Overview
+### 1. Overview
 
 | Option       | Default              | Type          |
 | :---         |     :---:            |     :---:     |
@@ -103,11 +104,28 @@ The field of the data object that provides the value.
 
 \* **IMPORTANT:** When `data` is provided, `valueField` and `textField` should also be set.
 
+### 2. Example
 
+```html
+  <script>
 
+    const multiSelect = new IconicMultiSelect({
+      customCss: true,
+      data: [{ valueName: "bread", itemName: 'Bread'}, { valueName: "rice", itemName: 'Rice'}, { valueName: "pasta", itemName: 'Pasta'}],
+      noData: "No food item found.",
+      noResults: "No results found in this list.",
+      placeholder: "Select an food item...",
+      select: "#foods",
+      textField: 'itemName',
+      valueField: 'valueName',
+    });
 
+  </script>
+```
 
+## Contributing
 
+Iconic Multiseclect is an open-source project. Contributions of any kind are welcome and appreciated. Feel free to open an issue and request a feature. Pull requests are also welcome.
 
 ## Author
 
