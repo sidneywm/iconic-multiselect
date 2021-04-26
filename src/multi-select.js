@@ -236,6 +236,10 @@ class IconicMultiSelect {
     this._handlePlaceholder();
   }
 
+  /**
+   * Shows the placeholder if no options are selected
+   * @private
+   */
   _handlePlaceholder() {
     if (this.selectedOptions.length > 0) {
       this.domElements.input.placeholder = "";
@@ -289,11 +293,21 @@ class IconicMultiSelect {
     this.selectContainer.insertAdjacentHTML("afterend", html);
   }
 
+  /**
+   * Removes an option from the list
+   * @param { string } value
+   * @private
+   */
   _removeOptionFromList(value) {
     const optionDom = document.querySelector(`span[data-value="${value}"]`);
     optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
   }
 
+  /**
+   * Shows a no results message
+   * @param { boolean } condition
+   * @private
+   */
   _showNoResults(condition) {
     const dom = document.querySelector(`.${this.prefix}multiselect__options--no-results`);
     if (condition) {
@@ -304,10 +318,19 @@ class IconicMultiSelect {
     }
   }
 
+  /**
+   * Shows a no data message
+   * @param { boolean } condition
+   * @private
+   */
   _showNoData(condition) {
     return condition ? `<p class="${this.prefix}multiselect__options--no-data">${this.noData}</p>` : "";
   }
 
+  /**
+   * Injects required CSS class properties in the <head></head>, if customCss param is not true
+   * @private
+   */
   _injectCss() {
     const css = `
       <style>
