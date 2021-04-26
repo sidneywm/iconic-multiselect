@@ -107,7 +107,7 @@ The field of the data object that provides the value.
 ### 2. Example
 
 ```html
-  <script>
+  <script type="text/javascript">
 
     const multiSelect = new IconicMultiSelect({
       customCss: true,
