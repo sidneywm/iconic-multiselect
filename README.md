@@ -33,7 +33,7 @@ If you intend to use the Iconic Multiselect component with Internet Explorer 11,
 
 ### 2. Create a select tag
 
-Secondly, within your HTML file, create a `select` tag which you want to turn into a multiselect. Do not forget to set an `id` on your `select` tag.
+Secondly, within your HTML file, create a `<select>` tag which you want to turn into a multiselect. Do not forget to set an `id` on your `<select>` tag.
 
 ```html
 <select id="foods">
@@ -48,7 +48,7 @@ Secondly, within your HTML file, create a `select` tag which you want to turn in
 
 ### 3. Initialize the Iconic Multiselect component
 
-Finally, target the `id` of your `select` tag in the options and initialize the component with the `.init()` method. You may also specify further options. (see below)
+Finally, target the `id` of your `<select>` tag in the options and initialize the component with the `.init()` method. You may also specify further options. (see below)
 
 ```html
 <script type="text/javascript">
@@ -84,7 +84,7 @@ If set to `true`, the component will not inject its own CSS in the `<head>` tag.
 The component can be configured with data set directly in the option fields. It must be an `Array` of `Objects`.
 
 #### `noData`
-Text to display if there is no data found in the `select` tag or in the data field.
+Text to display if there is no data found in the `<select>` tag or in the data field.
 
 #### `noResults`
 Text to display if there is no results when the option list is filtered.
@@ -93,7 +93,7 @@ Text to display if there is no results when the option list is filtered.
 Text to display in the input placeholder.
 
 #### `select`
-The `select` tag from which the component is initialized.
+The `<select>` tag from which the component is initialized.
 
 #### `textField`
 The field of the data object that provides the text content.
