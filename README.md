@@ -5,7 +5,7 @@
 <p align="center">A multiselect component written in pure JavaScript - Also compatible with IE11</p>
 
 <p align="center">
-  <img src="./assets/iconic-multiselect-screenshot.png">
+  <img src="./assets/iconic-multiselect.png">
 </p>
 
 ## Author
