@@ -12,7 +12,7 @@
 
 ### 1. Link the required files
 
-Firstly, the script needs to be included in your HTML file. If you would like to personalize the Iconic Multiselect component, you can additionally include a CSS stylesheet with your custom CSS properties which target the Iconic Multiselect component classes. Also, set `customCss` to `true`. (see below)
+Firstly, the script needs to be included in your HTML file. If you would like to personalize the Iconic Multiselect component, you can additionally include a CSS stylesheet with your custom CSS properties which target the Iconic Multiselect component classes. Also, do not forget to set `customCss` to `true`. (see below)
 
 ```html
 <head>
@@ -25,7 +25,7 @@ Firstly, the script needs to be included in your HTML file. If you would like to
 <script src="multi-select.js" type="text/javascript"></script>
 ```
 
-If you intend to use the Iconic Multiselect component for Internet Explorer 11, it is the recommended to use the script with the polyfills included.
+If you intend to use the Iconic Multiselect component with Internet Explorer 11, it is the recommended to use the script with the polyfills included.
 
 ```html
 <script src="multi-select-ie11-polyfills.js" type="text/javascript"></script>
@@ -33,7 +33,7 @@ If you intend to use the Iconic Multiselect component for Internet Explorer 11, 
 
 ### 2. Create a select tag
 
-Secondly, within your HTML file, you need to create a `select` tag which you want to turn into a multiselect. Do not forget to set an `id` on your select tag.
+Secondly, within your HTML file, you need to create a `select` tag which you want to turn into a multiselect. Do not forget to set an `id` on your `select` tag.
 
 ```html
 <select id="foods">
@@ -48,7 +48,7 @@ Secondly, within your HTML file, you need to create a `select` tag which you wan
 
 ### 3. Initialize the Iconic Multiselect component
 
-Finally, target the `id` of your `select` tag in the options and then initialize the component with the `.init()` method. You may also specify further options. (see below)
+Finally, target the `id` of your `select` tag in the options and initialize the component with the `.init()` method. You may also specify further options. (see below)
 
 ```html
 <script type="text/javascript">
