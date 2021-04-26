@@ -1,35 +1,27 @@
 /*!
- * IconicMultiSelect v0.1.0
+ * IconicMultiSelect v0.2.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
-// Add the forEach method to the NodeList interface if not included (for IE11 compatibility)
-if (window.NodeList && !NodeList.prototype.forEach) {
-  NodeList.prototype.forEach = Array.prototype.forEach;
-}
-
 /**
- * @version IconicMultiSelect v0.1.0
+ * @version IconicMultiSelect v0.2.0
  * @licence  MIT
  */
 class IconicMultiSelect {
-  prefix = "iconic" + Math.floor(1000 + Math.random() * 9000) + "-";
-
   customCss;
-
-  selectContainer;
-  placeholder;
-
+  data;
+  domElements = {};
+  event = () => {};
   noData;
   noResults;
-
   options = [];
+  placeholder;
+  prefix = "iconic" + Math.floor(1000 + Math.random() * 9000) + "-";
+  selectContainer;
   selectedOptions = [];
-
-  domElements = {};
-
-  event = () => {};
+  textField;
+  valueField;
 
   /**
    * Iconic Multiselect constructor.
@@ -39,14 +31,19 @@ class IconicMultiSelect {
    * @param { boolean } customCss - Determines if the component should inject its own css.
    * @param { string } noData - Defines the message when there is no data input.
    * @param { string } noResults - Defines the message when there is no result if options are filtered.
+   * @param { Object[] } data - Array of objects.
+   * @param { string } valueField - Field to select in the object for the value.
+   * @param { string } textField - Field to select in the object for the text.
    */
-  constructor({ select, placeholder, customCss, noData, noResults }) {
-    this.selectContainer = document.querySelector(select);
+  constructor({ customCss, data, noData, noResults, placeholder, select, textField, valueField }) {
     this.customCss = customCss;
-
-    this.placeholder = placeholder ?? "Select...";
+    this.data = data ?? [];
     this.noData = noData ?? "No data found.";
     this.noResults = noResults ?? "No results found.";
+    this.placeholder = placeholder ?? "Select...";
+    this.selectContainer = document.querySelector(select);
+    this.textField = textField ?? null;
+    this.valueField = valueField ?? null;
   }
 
   /**
@@ -55,10 +52,7 @@ class IconicMultiSelect {
    */
   init() {
     if (this.selectContainer && this.selectContainer.nodeName === "SELECT") {
-      this.options = Array.from(this.selectContainer.options).map((option) => ({
-        text: option.text,
-        value: option.value,
-      }));
+      this.options = this._getDataFromSettings() || this._getDataFromSelectTag();
 
       this._injectCss();
       this._renderMultiselect();
@@ -188,6 +182,39 @@ class IconicMultiSelect {
   }
 
   /**
+   * Gets data from select tag.
+   * @private
+   */
+  _getDataFromSelectTag() {
+    return Array.from(this.selectContainer.options).map((option) => ({
+      text: option.text,
+      value: option.value,
+    }));
+  }
+
+  /**
+   * Gets data from settings.
+   * @private
+   */
+  _getDataFromSettings() {
+    if (this.data.length > 0 && this.valueField && this.textField) {
+      const isValueFieldValid = typeof this.valueField === "string";
+      const isTextFieldValid = typeof this.textField === "string";
+
+      if (!isValueFieldValid || !isTextFieldValid) {
+        throw new Error("textField and valueField must be of type string");
+      }
+
+      return this.data.map((item) => ({
+        value: item[this.valueField],
+        text: item[this.textField],
+      }));
+    } else {
+      return null;
+    }
+  }
+
+  /**
    * Handles the backspace key event - Deletes the preceding option in the selection list.
    * @param { Event } e
    * @private
@@ -217,9 +244,9 @@ class IconicMultiSelect {
   }
 
   _handleOption(target, dispatchEvent = true) {
-    if (this.selectedOptions.some((el) => el.value === target.dataset.value)) {
+    if (this.selectedOptions.some((el) => el.value == target.dataset.value)) {
       target.classList.remove(`${this.prefix}multiselect__options--selected`);
-      this.selectedOptions = this.selectedOptions.filter((el) => el.value !== target.dataset.value);
+      this.selectedOptions = this.selectedOptions.filter((el) => el.value != target.dataset.value);
       this._removeOptionFromList(target.dataset.value);
 
       dispatchEvent &&
@@ -229,7 +256,7 @@ class IconicMultiSelect {
           selection: this.selectedOptions,
         });
     } else {
-      const option = this.options.find((el) => el.value === target.dataset.value);
+      const option = this.options.find((el) => el.value == target.dataset.value);
       target.classList.add(`${this.prefix}multiselect__options--selected`);
       this.selectedOptions = [...this.selectedOptions, option];
       this._addOptionToList(option);
