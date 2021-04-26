@@ -33,7 +33,7 @@ If you intend to use the Iconic Multiselect component with Internet Explorer 11,
 
 ### 2. Create a select tag
 
-Secondly, within your HTML file, you need to create a `select` tag which you want to turn into a multiselect. Do not forget to set an `id` on your `select` tag.
+Secondly, within your HTML file, create a `select` tag which you want to turn into a multiselect. Do not forget to set an `id` on your `select` tag.
 
 ```html
 <select id="foods">
