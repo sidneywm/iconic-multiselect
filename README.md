@@ -68,7 +68,7 @@ Finally, target the `id` of your `<select>` tag in the options and initialize th
 | Option       | Default              | Type          |
 | :---         |     :---:            |     :---:     |
 | customCss    | `false`              | `boolean`     |
-| data         | `undefined`          | `Object[]`    |
+| data         | `[]`                 | `Object[]`    |
 | noData       | `No data found.`     | `string`      |
 | noResults    | `No results found.`  | `string`      |
 | placeholder  | `Select...`          | `string`      |
