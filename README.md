@@ -118,7 +118,7 @@ The field of the data object that provides the value.
       ],
       noData: "No food item found.",
       noResults: "No results found in this list.",
-      placeholder: "Select an food item...",
+      placeholder: "Select a food item...",
       select: "#foods",
       textField: 'itemName',
       valueField: 'valueName',
