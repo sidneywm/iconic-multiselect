@@ -127,6 +127,32 @@ The field of the data object that provides the value.
   </script>
 ```
 
+## Methods
+
+#### `.init()`
+Initialize the component with all its settings.
+
+#### `.subscribe()`
+Listen to all the changes.
+
+Example : 
+
+```javascript
+JavaScript:
+
+multiSelect.subscribe(function(event) {
+  console.log(event);
+});
+
+```
+
+```console 
+Console:
+
+Object : { action: "ADD_OPTION", value: "pasta", selection: (1) [...] }
+```
+
+
 ## Contributing
 
 Iconic Multiselect is an open-source project. Contributions of any kind are welcome and appreciated. Feel free to open an issue or request a feature. Pull requests are also welcome.
