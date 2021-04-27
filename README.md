@@ -133,7 +133,7 @@ The field of the data object that provides the value.
 Initialize the component with all its settings.
 
 #### `.subscribe()`
-Listen to all the changes.
+Listen for all events.
 
 Example: 
 
