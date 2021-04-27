@@ -82,7 +82,7 @@ Finally, target the `id` of your `<select>` tag in the options and initialize th
 If set to `true`, the component will not inject its own CSS in the `<head>` tag.
 
 #### `data*`
-The component can be configured with data set directly in the option fields. It must be an `Array` of `Objects`.
+The component can be configured with data set in the configuration fields. It must be an `Array` of `Objects`.
 
 #### `noData`
 Text to display if there is no data found in the `<select>` tag or in the data field.
