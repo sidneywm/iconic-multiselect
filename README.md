@@ -25,7 +25,7 @@ Firstly, the script needs to be included in your HTML file. If you would like to
 <script src="multi-select.js" type="text/javascript"></script>
 ```
 
-If you intend to use the Iconic Multiselect component with Internet Explorer 11, it is the recommended to use the script with the polyfills included.
+If you intend to use the Iconic Multiselect component with Internet Explorer 11, it is recommended to use the script with the polyfills included.
 
 ```html
 <script src="multi-select-ie11-polyfills.js" type="text/javascript"></script>
