@@ -12,7 +12,7 @@
 
 ### 1. Link the required files
 
-Firstly, the script needs to be included in your HTML file. If you would like to personalize the Iconic Multiselect component, you can additionally include a CSS stylesheet with your custom CSS properties which target the Iconic Multiselect component classes. Also, do not forget to set `customCss` to `true`. (see below)
+Firstly, the script needs to be included in your HTML file. If you would like to personalize the Iconic Multiselect component, you can additionally include a CSS stylesheet with your custom CSS properties which target the Iconic Multiselect component classes. Also, do not forget to set `customCss` to `true`. ([see configuration](#configuration))
 
 ```html
 <head>
@@ -48,7 +48,7 @@ Secondly, within your HTML file, create a `<select>` tag which you want to turn 
 
 ### 3. Initialize the Iconic Multiselect component
 
-Finally, target the `id` of your `<select>` tag in the options and initialize the component with the `.init()` method. You may also specify further options. (see below)
+Finally, target the `id` of your `<select>` tag in the options and initialize the component with the `.init()` method. You may also specify further options. ([see configuration](#configuration))
 
 ```html
 <script type="text/javascript">
