@@ -135,7 +135,7 @@ Initialize the component with all its settings.
 #### `.subscribe()`
 Listen to all the changes.
 
-Example : 
+Example: 
 
 ```javascript
 JavaScript:
