@@ -22,7 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*!
- * IconicMultiSelect v0.3.0
+ * IconicMultiSelect v0.3.1
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
@@ -153,6 +153,8 @@ var IconicMultiSelect = function () {
       this.domElements.optionsContainer.style.display = "none";
 
       this._filterOptions("");
+
+      this._removeAllArrowSelected();
     }
   }, {
     key: "_dispatchEvent",
@@ -316,8 +318,6 @@ var IconicMultiSelect = function () {
         var selected = document.querySelector(".".concat(this.prefix, "multiselect__options ul li.arrow-selected"));
 
         if (selected) {
-          selected.classList.remove("arrow-selected");
-
           this._handleOption(selected);
 
           this._closeList();
@@ -381,6 +381,16 @@ var IconicMultiSelect = function () {
       } else {
         this.domElements.input.placeholder = this.placeholder;
       }
+    }
+  }, {
+    key: "_removeAllArrowSelected",
+    value: function _removeAllArrowSelected() {
+      var className = "arrow-selected";
+      this.domElements.options.forEach(function (el) {
+        if (el.classList.contains(className)) {
+          el.classList.remove(className);
+        }
+      });
     }
   }, {
     key: "_removeOptionFromList",

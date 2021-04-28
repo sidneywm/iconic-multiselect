@@ -1,11 +1,11 @@
 /*!
- * IconicMultiSelect v0.3.0
+ * IconicMultiSelect v0.3.1
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.3.0
+ * @version IconicMultiSelect v0.3.1
  * @licence  MIT
  */
 class IconicMultiSelect {
@@ -127,6 +127,7 @@ class IconicMultiSelect {
     this.domElements.input.value = "";
     this.domElements.optionsContainer.style.display = "none";
     this._filterOptions("");
+    this._removeAllArrowSelected();
   }
 
   /**
@@ -300,7 +301,6 @@ class IconicMultiSelect {
     if (event.keyCode === 13) {
       const selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
       if (selected) {
-        selected.classList.remove("arrow-selected");
         this._handleOption(selected);
         this._closeList();
       }
@@ -359,6 +359,15 @@ class IconicMultiSelect {
     } else {
       this.domElements.input.placeholder = this.placeholder;
     }
+  }
+
+  _removeAllArrowSelected() {
+    const className = "arrow-selected";
+    this.domElements.options.forEach((el) => {
+      if (el.classList.contains(className)) {
+        el.classList.remove(className);
+      }
+    });
   }
 
   /**
