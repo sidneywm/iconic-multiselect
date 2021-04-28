@@ -120,7 +120,9 @@ var IconicMultiSelect = function () {
           removeBtn = _document$querySelect.firstElementChild;
 
       removeBtn.addEventListener("click", function () {
-        var target = document.querySelector("li[data-value=\"".concat(option.value, "\"]"));
+        var target = Array.from(_this.domElements.options).find(function (el) {
+          return el.dataset.value === option.value;
+        });
 
         _this._handleOption(target);
       });
@@ -131,7 +133,9 @@ var IconicMultiSelect = function () {
       var _this2 = this;
 
       this.selectedOptions.forEach(function (el) {
-        var targetLastSelectedOption = document.querySelector("li[data-value=\"".concat(el.value, "\"]"));
+        var targetLastSelectedOption = Array.from(_this2.domElements.options).find(function (t) {
+          return t.dataset.value === el.value;
+        });
 
         _this2._handleOption(targetLastSelectedOption, false);
       });
@@ -190,12 +194,20 @@ var IconicMultiSelect = function () {
   }, {
     key: "_filterOptions",
     value: function _filterOptions(value) {
+      var _this4 = this;
+
+      var isOpen = this.domElements.optionsContainer.style.display === "block";
+
+      if (!isOpen && value.length > 0) {
+        this.domElements.optionsContainer.style.display = "block";
+      }
+
       var valueLowerCase = value.toLowerCase();
       this.domElements.options.forEach(function (el) {
         if (el.dataset.value.toLowerCase().startsWith(valueLowerCase)) {
-          el.style.display = "block";
+          _this4.domElements.optionsContainerList.append(el);
         } else {
-          el.style.display = "none";
+          el.remove();
         }
       });
       var hasResults = Array.from(this.domElements.options).some(function (el) {
@@ -217,7 +229,7 @@ var IconicMultiSelect = function () {
   }, {
     key: "_getDataFromSettings",
     value: function _getDataFromSettings() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (this.data.length > 0 && this.valueField && this.textField) {
         var isValueFieldValid = typeof this.valueField === "string";
@@ -229,8 +241,8 @@ var IconicMultiSelect = function () {
 
         return this.data.map(function (item) {
           return {
-            value: item[_this4.valueField],
-            text: item[_this4.textField]
+            value: item[_this5.valueField],
+            text: item[_this5.textField]
           };
         });
       } else {
@@ -240,15 +252,15 @@ var IconicMultiSelect = function () {
   }, {
     key: "_handleArrows",
     value: function _handleArrows(event) {
-      console.log(event);
-
       if (event.keyCode === 40 || event.keyCode === 38) {
-        var isOpen = this.domElements.optionsContainer.style.display === "block";
+        var isOpen = this.domElements.optionsContainer.style.display === "block"; 
+
+        var optionsContainerList = document.querySelector(".".concat(this.prefix + "multiselect__options > ul"));
 
         if (!isOpen) {
           this.domElements.optionsContainer.style.display = "block";
-          this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
-          this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+          optionsContainerList.firstElementChild.classList.add("arrow-selected");
+          optionsContainerList.firstElementChild.scrollIntoView();
         } else {
           var selected = document.querySelector(".".concat(this.prefix, "multiselect__options ul li.arrow-selected"));
           var scrollIntoViewOption = {
@@ -257,12 +269,14 @@ var IconicMultiSelect = function () {
           };
           var action = {
             ArrowUp: "previous",
-            ArrowDown: "next"
+            Up: "previous",
+            ArrowDown: "next",
+            Down: "next"
           };
 
           if (!selected) {
-            this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
-            this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+            optionsContainerList.firstElementChild.classList.add("arrow-selected");
+            optionsContainerList.firstElementChild.scrollIntoView();
             return;
           }
 
@@ -270,7 +284,7 @@ var IconicMultiSelect = function () {
           selected = selected[action[event.key] + "ElementSibling"];
 
           if (!selected) {
-            selected = this.domElements.options[action[event.key] === "next" ? 0 : this.domElements.options.length - 1];
+            selected = optionsContainerList.children[action[event.key] === "next" ? 0 : optionsContainerList.children.length - 1];
             selected.classList.add("arrow-selected");
             selected.scrollIntoView(scrollIntoViewOption);
             return;
@@ -371,13 +385,13 @@ var IconicMultiSelect = function () {
     key: "_removeOptionFromList",
     value: function _removeOptionFromList(value) {
       var optionDom = document.querySelector("span[data-value=\"".concat(value, "\"]"));
-      optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
+      optionDom.remove();
     }
   }, {
     key: "_renderOptionsList",
     value: function _renderOptionsList() {
       var html = "\n        <div style=\"display: none;\" class=\"".concat(this.prefix, "multiselect__options\">\n          <ul>\n          ").concat(this.options.length > 0 ? this.options.map(function (option) {
-        return "\n              <li tabIndex=\"-1\" style=\"display: block;\" data-value=\"".concat(option.value, "\">").concat(option.text, "</li>\n            ");
+        return "\n              <li data-value=\"".concat(option.value, "\">").concat(option.text, "</li>\n            ");
       }).join("") : "", "\n          ").concat(this._showNoData(this.options.length === 0), "\n          </ul>\n        </div>\n      ");
       document.querySelector(".".concat(this.prefix + "multiselect__container")).insertAdjacentHTML("beforeend", html);
     }
@@ -402,7 +416,7 @@ var IconicMultiSelect = function () {
         var html = "<p class=\"".concat(this.prefix, "multiselect__options--no-results\">").concat(this.noResults, "</p>");
         !dom && this.domElements.optionsContainerList.insertAdjacentHTML("beforeend", html);
       } else {
-        dom && dom.parentNode && dom.parentNode.removeChild(dom);
+        dom && dom.removeChild();
       }
     }
   }, {

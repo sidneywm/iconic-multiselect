@@ -42,18 +42,8 @@ function jsMin(done) {
   )
 }
 
-function jsMinPolyfill(done) {
-  const file = "./polyfill/ie-11-polyfills.js"
-  return (
-    src(file)
-      .pipe(plumber())
-      .pipe(minify({ preserveComments: 'some' }))
-      .pipe(dest("./tmp"))
-  )
-}
-
 function jsConcatMinWithPolyfill(done) {
-  const files = ["./tmp/ie-11-polyfills-min.js", "./tmp/multi-select-min.js"]
+  const files = ["./polyfill/ie11-polyfills.min.js", "./tmp/multi-select-min.js"]
   return (
     src(files)
       .pipe(plumber())
@@ -63,7 +53,7 @@ function jsConcatMinWithPolyfill(done) {
 }
 
 function jsConcatWithPolyfill(done) {
-  const files = ["./tmp/ie-11-polyfills.js", "./tmp/multi-select.js"]
+  const files = ["./polyfill/ie11-polyfills.min.js", "./tmp/multi-select.js"]
   return (
     src(files)
       .pipe(plumber())
@@ -89,4 +79,4 @@ function clean(done) {
 
 
 
-exports.default = series(jsBuild, jsMin, jsMinPolyfill, jsConcatMinWithPolyfill, jsConcatWithPolyfill, jsRemoveCommentsWithPolyfill, clean)
+exports.default = series(jsBuild, jsMin, jsConcatMinWithPolyfill, jsConcatWithPolyfill, jsRemoveCommentsWithPolyfill, clean)

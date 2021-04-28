@@ -240,7 +240,7 @@ class IconicMultiSelect {
       } else {
         let selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
         const scrollIntoViewOption = { block: "nearest", inline: "nearest" };
-        const action = { ArrowUp: "previous", ArrowDown: "next" };
+        const action = { ArrowUp: "previous", Up: "previous", ArrowDown: "next", Down: "next" };
 
         if (!selected) {
           optionsContainerList.firstElementChild.classList.add("arrow-selected");
@@ -355,7 +355,7 @@ class IconicMultiSelect {
    */
   _removeOptionFromList(value) {
     const optionDom = document.querySelector(`span[data-value="${value}"]`);
-    optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
+    optionDom.remove();
   }
 
   /**
@@ -423,7 +423,7 @@ class IconicMultiSelect {
       const html = `<p class="${this.prefix}multiselect__options--no-results">${this.noResults}</p>`;
       !dom && this.domElements.optionsContainerList.insertAdjacentHTML("beforeend", html);
     } else {
-      dom && dom.parentNode && dom.parentNode.removeChild(dom);
+      dom && dom.removeChild();
     }
   }
 
