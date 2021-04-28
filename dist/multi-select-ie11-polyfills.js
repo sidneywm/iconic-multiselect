@@ -2144,6 +2144,14 @@ var IconicMultiSelect = function () {
       });
     }
   }, {
+    key: "_closeList",
+    value: function _closeList() {
+      this.domElements.input.value = "";
+      this.domElements.optionsContainer.style.display = "none";
+
+      this._filterOptions("");
+    }
+  }, {
     key: "_dispatchEvent",
     value: function _dispatchEvent(event) {
       this.event(event);
@@ -2162,10 +2170,7 @@ var IconicMultiSelect = function () {
 
           _this3._handleOption(target);
 
-          _this3.domElements.input.value = "";
-          _this3.domElements.optionsContainer.style.display = "none";
-
-          _this3._filterOptions("");
+          _this3._closeList();
         });
       });
       this.domElements.input.addEventListener("focus", function () {
@@ -2177,7 +2182,11 @@ var IconicMultiSelect = function () {
         _this3._filterOptions(value);
       });
       this.domElements.input.addEventListener("keydown", function (e) {
+        _this3._handleArrows(e);
+
         _this3._handleBackspace(e);
+
+        _this3._handleEnter(e);
       });
     }
   }, {
@@ -2231,6 +2240,50 @@ var IconicMultiSelect = function () {
       }
     }
   }, {
+    key: "_handleArrows",
+    value: function _handleArrows(event) {
+      console.log(event);
+
+      if (event.keyCode === 40 || event.keyCode === 38) {
+        var isOpen = this.domElements.optionsContainer.style.display === "block";
+
+        if (!isOpen) {
+          this.domElements.optionsContainer.style.display = "block";
+          this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
+          this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+        } else {
+          var selected = document.querySelector(".".concat(this.prefix, "multiselect__options ul li.arrow-selected"));
+          var scrollIntoViewOption = {
+            block: "nearest",
+            inline: "nearest"
+          };
+          var action = {
+            ArrowUp: "previous",
+            ArrowDown: "next"
+          };
+
+          if (!selected) {
+            this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
+            this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+            return;
+          }
+
+          selected.classList.remove("arrow-selected");
+          selected = selected[action[event.key] + "ElementSibling"];
+
+          if (!selected) {
+            selected = this.domElements.options[action[event.key] === "next" ? 0 : this.domElements.options.length - 1];
+            selected.classList.add("arrow-selected");
+            selected.scrollIntoView(scrollIntoViewOption);
+            return;
+          }
+
+          selected.classList.add("arrow-selected");
+          selected.scrollIntoView(scrollIntoViewOption);
+        }
+      }
+    }
+  }, {
     key: "_handleBackspace",
     value: function _handleBackspace(e) {
       if (e.keyCode === 8 && e.target.value === "") {
@@ -2240,6 +2293,21 @@ var IconicMultiSelect = function () {
           var targetLastSelectedOption = document.querySelector("li[data-value=\"".concat(lastSelectedOption.value, "\"]"));
 
           this._handleOption(targetLastSelectedOption);
+        }
+      }
+    }
+  }, {
+    key: "_handleEnter",
+    value: function _handleEnter(event) {
+      if (event.keyCode === 13) {
+        var selected = document.querySelector(".".concat(this.prefix, "multiselect__options ul li.arrow-selected"));
+
+        if (selected) {
+          selected.classList.remove("arrow-selected");
+
+          this._handleOption(selected);
+
+          this._closeList();
         }
       }
     }
@@ -2311,7 +2379,7 @@ var IconicMultiSelect = function () {
     key: "_renderOptionsList",
     value: function _renderOptionsList() {
       var html = "\n        <div style=\"display: none;\" class=\"".concat(this.prefix, "multiselect__options\">\n          <ul>\n          ").concat(this.options.length > 0 ? this.options.map(function (option) {
-        return "\n              <li style=\"display: block;\" data-value=\"".concat(option.value, "\">").concat(option.text, "</li>\n            ");
+        return "\n              <li tabIndex=\"-1\" style=\"display: block;\" data-value=\"".concat(option.value, "\">").concat(option.text, "</li>\n            ");
       }).join("") : "", "\n          ").concat(this._showNoData(this.options.length === 0), "\n          </ul>\n        </div>\n      ");
       document.querySelector(".".concat(this.prefix + "multiselect__container")).insertAdjacentHTML("beforeend", html);
     }
@@ -2342,7 +2410,7 @@ var IconicMultiSelect = function () {
   }, {
     key: "_injectCss",
     value: function _injectCss() {
-      var css = "\n      <style>\n        .".concat(this.prefix, "multiselect__container {\n          align-items: center;\n          background-color: #fff;\n          border-radius: 2px;\n          border: 1px solid rgba(0,0,0,.08);\n          box-sizing: border-box;\n          display: flex;\n          font-family: Arial,Helvetica,sans-serif;\n          min-height: 40px;\n          padding: 4px 8px 0 8px;\n          position: relative;\n          width: 354px;\n        }\n\n        .").concat(this.prefix, "multiselect__container:after {\n          content:'';\n          min-height:inherit;\n          font-size:0;\n        }\n\n        .").concat(this.prefix, "multiselect__container > * {\n          color: #656565;\n          font-size: 14px;\n        }\n\n        .").concat(this.prefix + "multiselect__wrapper", " {\n          display: flex;\n          flex-wrap: wrap;\n          height: 100%;\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__clear-btn {\n           cursor: pointer;\n           margin-bottom: 4px;\n           margin-left: 4px;\n        }\n\n        .").concat(this.prefix, "multiselect__options {\n          background-color: #f6f6f6;\n          border-radius: 2px;\n          border: 1px solid rgba(0,0,0,.08);\n          left: -1px;\n          max-height: 120px;\n          overflow: auto;\n          position: absolute;\n          top: calc(100% + 2px);\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul {\n          list-style: none;\n          margin: 0;\n          padding: 2px 0;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li {\n          cursor: pointer;\n          padding: 4px 8px;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-results, \n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-data {\n          margin: 0;\n          padding: 8px;\n          text-align: center;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected {\n          background-color: #ff6358;\n          color: #fff;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected:hover {\n          background-color: #eb5b51;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li:hover {\n          background-color: #dedede;\n        }\n\n        .").concat(this.prefix, "multiselect__selected {\n          background-color: #656565;\n          border-radius: 2px;\n          color: #fff;\n          margin-bottom: 4px;\n          margin-right: 4px;\n          padding: 4px 8px;\n          display: flex;\n          align-items: center;\n        }\n\n        .").concat(this.prefix, "multiselect__selected .").concat(this.prefix, "multiselect__remove-btn {\n          cursor: pointer;\n          margin-left: 6px;\n        }\n\n        .").concat(this.prefix, "multiselect__input {\n          border: none;\n          flex-basis: 40px;\n          flex-grow: 1;\n          margin-bottom: 4px;\n          min-width: 40px;\n          outline: none;            \n        }\n      </style>\n      ");
+      var css = "\n      <style>\n        .".concat(this.prefix, "multiselect__container {\n          align-items: center;\n          background-color: #fff;\n          border-radius: 2px;\n          border: 1px solid rgba(0,0,0,.08);\n          box-sizing: border-box;\n          display: flex;\n          font-family: Arial,Helvetica,sans-serif;\n          min-height: 40px;\n          padding: 4px 8px 0 8px;\n          position: relative;\n          width: 354px;\n        }\n\n        .").concat(this.prefix, "multiselect__container:after {\n          content:'';\n          min-height:inherit;\n          font-size:0;\n        }\n\n        .").concat(this.prefix, "multiselect__container > * {\n          color: #656565;\n          font-size: 14px;\n        }\n\n        .").concat(this.prefix + "multiselect__wrapper", " {\n          display: flex;\n          flex-wrap: wrap;\n          height: 100%;\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__clear-btn {\n           cursor: pointer;\n           margin-bottom: 4px;\n           margin-left: 4px;\n        }\n\n        .").concat(this.prefix, "multiselect__options {\n          background-color: #f6f6f6;\n          border-radius: 2px;\n          border: 1px solid rgba(0,0,0,.08);\n          left: -1px;\n          position: absolute;\n          top: calc(100% + 2px);\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul {\n          list-style: none;\n          margin: 0;\n          padding: 2px 0;\n          max-height: 120px;\n          overflow: auto;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li {\n          cursor: pointer;\n          padding: 4px 8px;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-results, \n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-data {\n          margin: 0;\n          padding: 8px;\n          text-align: center;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected {\n          background-color: #ff6358;\n          color: #fff;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected:hover {\n          background-color: #eb5b51;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li:hover {\n          background-color: #dedede;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.arrow-selected {\n          border: 1px solid #000;\n        }\n\n        .").concat(this.prefix, "multiselect__selected {\n          background-color: #656565;\n          border-radius: 2px;\n          color: #fff;\n          margin-bottom: 4px;\n          margin-right: 4px;\n          padding: 4px 8px;\n          display: flex;\n          align-items: center;\n        }\n\n        .").concat(this.prefix, "multiselect__selected .").concat(this.prefix, "multiselect__remove-btn {\n          cursor: pointer;\n          margin-left: 6px;\n        }\n\n        .").concat(this.prefix, "multiselect__input {\n          border: none;\n          flex-basis: 40px;\n          flex-grow: 1;\n          margin-bottom: 4px;\n          min-width: 40px;\n          outline: none;            \n        }\n      </style>\n      ");
       if (!this.customCss) document.querySelector("head").insertAdjacentHTML("beforeend", css);
       if (this.customCss) this.prefix = "";
     }

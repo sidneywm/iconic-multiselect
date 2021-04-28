@@ -120,6 +120,12 @@ class IconicMultiSelect {
     });
   }
 
+  _closeList() {
+    this.domElements.input.value = "";
+    this.domElements.optionsContainer.style.display = "none";
+    this._filterOptions("");
+  }
+
   /**
    * Dispatches new events.
    * @param { object : { action: string; selection: { option: string; text: string; }[]; value?: string; } } event
@@ -141,9 +147,7 @@ class IconicMultiSelect {
     this.domElements.options.forEach((option) => {
       option.addEventListener("click", ({ target }) => {
         this._handleOption(target);
-        this.domElements.input.value = "";
-        this.domElements.optionsContainer.style.display = "none";
-        this._filterOptions("");
+        this._closeList();
       });
     });
 
@@ -156,7 +160,9 @@ class IconicMultiSelect {
     });
 
     this.domElements.input.addEventListener("keydown", (e) => {
+      this._handleArrows(e);
       this._handleBackspace(e);
+      this._handleEnter(e);
     });
   }
 
@@ -214,6 +220,42 @@ class IconicMultiSelect {
     }
   }
 
+  _handleArrows(event) {
+    if (event.keyCode === 40 || event.keyCode === 38) {
+      const isOpen = this.domElements.optionsContainer.style.display === "block";
+
+      if (!isOpen) {
+        this.domElements.optionsContainer.style.display = "block";
+        this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
+        this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+      } else {
+        let selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
+        const scrollIntoViewOption = { block: "nearest", inline: "nearest" };
+        const action = { ArrowUp: "previous", ArrowDown: "next" };
+
+        if (!selected) {
+          this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
+          this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+          return;
+        }
+
+        selected.classList.remove("arrow-selected");
+
+        selected = selected[action[event.key] + "ElementSibling"];
+
+        if (!selected) {
+          selected = this.domElements.options[action[event.key] === "next" ? 0 : this.domElements.options.length - 1];
+          selected.classList.add("arrow-selected");
+          selected.scrollIntoView(scrollIntoViewOption);
+          return;
+        }
+
+        selected.classList.add("arrow-selected");
+        selected.scrollIntoView(scrollIntoViewOption);
+      }
+    }
+  }
+
   /**
    * Handles the backspace key event - Deletes the preceding option in the selection list.
    * @param { Event } e
@@ -227,6 +269,17 @@ class IconicMultiSelect {
       if (lastSelectedOption) {
         const targetLastSelectedOption = document.querySelector(`li[data-value="${lastSelectedOption.value}"]`);
         this._handleOption(targetLastSelectedOption);
+      }
+    }
+  }
+
+  _handleEnter(event) {
+    if (event.keyCode === 13) {
+      const selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
+      if (selected) {
+        selected.classList.remove("arrow-selected");
+        this._handleOption(selected);
+        this._closeList();
       }
     }
   }
@@ -308,7 +361,7 @@ class IconicMultiSelect {
               ? this.options
                   .map((option) => {
                     return `
-              <li style="display: block;" data-value="${option.value}">${option.text}</li>
+              <li tabIndex="-1" style="display: block;" data-value="${option.value}">${option.text}</li>
             `;
                   })
                   .join("")
@@ -414,8 +467,6 @@ class IconicMultiSelect {
           border-radius: 2px;
           border: 1px solid rgba(0,0,0,.08);
           left: -1px;
-          max-height: 120px;
-          overflow: auto;
           position: absolute;
           top: calc(100% + 2px);
           width: 100%;
@@ -425,6 +476,8 @@ class IconicMultiSelect {
           list-style: none;
           margin: 0;
           padding: 2px 0;
+          max-height: 120px;
+          overflow: auto;
         }
 
         .${this.prefix}multiselect__options ul li {
@@ -450,6 +503,10 @@ class IconicMultiSelect {
 
         .${this.prefix}multiselect__options ul li:hover {
           background-color: #dedede;
+        }
+
+        .${this.prefix}multiselect__options ul li.arrow-selected {
+          border: 1px solid #000;
         }
 
         .${this.prefix}multiselect__selected {
