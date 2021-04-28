@@ -25,15 +25,14 @@ class IconicMultiSelect {
 
   /**
    * Iconic Multiselect constructor.
-   * @param { string } select - DOM element to be selected. It must be a HTML Select tag.
-   * @see - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
-   * @param { string } placeholder -  Defines the placeholder's text.
    * @param { boolean } customCss - Determines if the component should inject its own css.
+   * @param { Object[] } data - Array of objects.
    * @param { string } noData - Defines the message when there is no data input.
    * @param { string } noResults - Defines the message when there is no result if options are filtered.
-   * @param { Object[] } data - Array of objects.
-   * @param { string } valueField - Field to select in the object for the value.
+   * @param { string } placeholder -  Defines the placeholder's text.
+   * @param { string } select - DOM element to be selected. It must be a HTML Select tag - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select
    * @param { string } textField - Field to select in the object for the text.
+   * @param { string } valueField - Field to select in the object for the value.
    */
   constructor({ customCss, data, noData, noResults, placeholder, select, textField, valueField }) {
     this.customCss = customCss;
@@ -99,7 +98,7 @@ class IconicMultiSelect {
 
     const { firstElementChild: removeBtn } = document.querySelector(`span[data-value="${option.value}"]`);
     removeBtn.addEventListener("click", () => {
-      const target = Array.from(this.domElements.options).find(el => el.dataset.value === option.value);
+      const target = Array.from(this.domElements.options).find((el) => el.dataset.value === option.value);
       this._handleOption(target);
     });
   }
@@ -110,7 +109,7 @@ class IconicMultiSelect {
    */
   _clearSelection() {
     this.selectedOptions.forEach((el) => {
-      const targetLastSelectedOption = Array.from(this.domElements.options).find(t => t.dataset.value === el.value);
+      const targetLastSelectedOption = Array.from(this.domElements.options).find((t) => t.dataset.value === el.value);
       this._handleOption(targetLastSelectedOption, false);
     });
 
@@ -120,6 +119,10 @@ class IconicMultiSelect {
     });
   }
 
+  /**
+   * Close the options container.
+   * @private
+   */
   _closeList() {
     this.domElements.input.value = "";
     this.domElements.optionsContainer.style.display = "none";
@@ -227,6 +230,11 @@ class IconicMultiSelect {
     }
   }
 
+  /**
+   * Handles Arrow up & Down. Selection of an option is also possible with these keys.
+   * @param { Event } event
+   * @private
+   */
   _handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
       const isOpen = this.domElements.optionsContainer.style.display === "block";
@@ -283,6 +291,11 @@ class IconicMultiSelect {
     }
   }
 
+  /**
+   * Handles the enter key event.
+   * @param { Event } event
+   * @private
+   */
   _handleEnter(event) {
     if (event.keyCode === 13) {
       const selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
@@ -423,7 +436,7 @@ class IconicMultiSelect {
       const html = `<p class="${this.prefix}multiselect__options--no-results">${this.noResults}</p>`;
       !dom && this.domElements.optionsContainerList.insertAdjacentHTML("beforeend", html);
     } else {
-      dom && dom.removeChild();
+      dom && dom.remove();
     }
   }
 
@@ -516,7 +529,7 @@ class IconicMultiSelect {
         }
 
         .${this.prefix}multiselect__options ul li.arrow-selected {
-          border: 1px solid #000;
+          border: 2px solid rgb(101, 101, 101, 0.5);
         }
 
         .${this.prefix}multiselect__selected {
