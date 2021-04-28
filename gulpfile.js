@@ -42,38 +42,28 @@ function jsMin(done) {
   )
 }
 
-function jsMinPolyfill(done) {
-  const file = "./polyfill/ie-11-polyfill.js"
-  return (
-    src(file)
-      .pipe(plumber())
-      .pipe(minify({ preserveComments: 'some' }))
-      .pipe(dest("./tmp"))
-  )
-}
-
 function jsConcatMinWithPolyfill(done) {
-  const files = ["./tmp/ie-11-polyfill-min.js", "./tmp/multi-select-min.js"]
+  const files = ["./polyfill/ie11-polyfills.min.js", "./tmp/multi-select-min.js"]
   return (
     src(files)
       .pipe(plumber())
-      .pipe(concat("multi-select-ie11-polyfill.min.js"))
+      .pipe(concat("multi-select-ie11-polyfills.min.js"))
       .pipe(dest("./dist"))
   )
 }
 
 function jsConcatWithPolyfill(done) {
-  const files = ["./tmp/ie-11-polyfill.js", "./tmp/multi-select.js"]
+  const files = ["./polyfill/ie11-polyfills.min.js", "./tmp/multi-select.js"]
   return (
     src(files)
       .pipe(plumber())
-      .pipe(concat("multi-select-ie11-polyfill.js"))
+      .pipe(concat("multi-select-ie11-polyfills.js"))
       .pipe(dest("./tmp"))
   )
 }
 
 function jsRemoveCommentsWithPolyfill(done) {
-  const files = "./tmp/multi-select-ie11-polyfill.js"
+  const files = "./tmp/multi-select-ie11-polyfills.js"
   return (
     src(files)
       .pipe(decomment({ trim: true, safe: true}))
@@ -89,4 +79,4 @@ function clean(done) {
 
 
 
-exports.default = series(jsBuild, jsMin, jsMinPolyfill, jsConcatMinWithPolyfill, jsConcatWithPolyfill, jsRemoveCommentsWithPolyfill, clean)
+exports.default = series(jsBuild, jsMin, jsConcatMinWithPolyfill, jsConcatWithPolyfill, jsRemoveCommentsWithPolyfill, clean)
