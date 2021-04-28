@@ -99,7 +99,7 @@ class IconicMultiSelect {
 
     const { firstElementChild: removeBtn } = document.querySelector(`span[data-value="${option.value}"]`);
     removeBtn.addEventListener("click", () => {
-      const target = document.querySelector(`li[data-value="${option.value}"]`);
+      const target = Array.from(this.domElements.options).find(el => el.dataset.value === option.value);
       this._handleOption(target);
     });
   }
@@ -110,7 +110,7 @@ class IconicMultiSelect {
    */
   _clearSelection() {
     this.selectedOptions.forEach((el) => {
-      const targetLastSelectedOption = document.querySelector(`li[data-value="${el.value}"]`);
+      const targetLastSelectedOption = Array.from(this.domElements.options).find(t => t.dataset.value === el.value);
       this._handleOption(targetLastSelectedOption, false);
     });
 
@@ -172,12 +172,19 @@ class IconicMultiSelect {
    * @private
    */
   _filterOptions(value) {
+    const isOpen = this.domElements.optionsContainer.style.display === "block";
+
+    if (!isOpen && value.length > 0) {
+      this.domElements.optionsContainer.style.display = "block";
+    }
+
     const valueLowerCase = value.toLowerCase();
+
     this.domElements.options.forEach((el) => {
       if (el.dataset.value.toLowerCase().startsWith(valueLowerCase)) {
-        el.style.display = "block";
+        this.domElements.optionsContainerList.append(el);
       } else {
-        el.style.display = "none";
+        el.remove();
       }
     });
 
@@ -223,19 +230,21 @@ class IconicMultiSelect {
   _handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
       const isOpen = this.domElements.optionsContainer.style.display === "block";
+      // An updated view of the container is needed
+      const optionsContainerList = document.querySelector(`.${this.prefix + "multiselect__options > ul"}`);
 
       if (!isOpen) {
         this.domElements.optionsContainer.style.display = "block";
-        this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
-        this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+        optionsContainerList.firstElementChild.classList.add("arrow-selected");
+        optionsContainerList.firstElementChild.scrollIntoView();
       } else {
         let selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
         const scrollIntoViewOption = { block: "nearest", inline: "nearest" };
         const action = { ArrowUp: "previous", ArrowDown: "next" };
 
         if (!selected) {
-          this.domElements.optionsContainerList.firstElementChild.classList.add("arrow-selected");
-          this.domElements.optionsContainerList.firstElementChild.scrollIntoView();
+          optionsContainerList.firstElementChild.classList.add("arrow-selected");
+          optionsContainerList.firstElementChild.scrollIntoView();
           return;
         }
 
@@ -244,7 +253,8 @@ class IconicMultiSelect {
         selected = selected[action[event.key] + "ElementSibling"];
 
         if (!selected) {
-          selected = this.domElements.options[action[event.key] === "next" ? 0 : this.domElements.options.length - 1];
+          selected =
+            optionsContainerList.children[action[event.key] === "next" ? 0 : optionsContainerList.children.length - 1];
           selected.classList.add("arrow-selected");
           selected.scrollIntoView(scrollIntoViewOption);
           return;
@@ -361,7 +371,7 @@ class IconicMultiSelect {
               ? this.options
                   .map((option) => {
                     return `
-              <li tabIndex="-1" style="display: block;" data-value="${option.value}">${option.text}</li>
+              <li data-value="${option.value}">${option.text}</li>
             `;
                   })
                   .join("")
