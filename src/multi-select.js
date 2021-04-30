@@ -1,11 +1,11 @@
 /*!
- * IconicMultiSelect v0.3.2
+ * IconicMultiSelect v0.3.3
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.3.2
+ * @version IconicMultiSelect v0.3.3
  * @licence  MIT
  */
 class IconicMultiSelect {
@@ -185,7 +185,7 @@ class IconicMultiSelect {
     const valueLowerCase = value.toLowerCase();
 
     this.domElements.options.forEach((el) => {
-      if (el.dataset.value.toLowerCase().startsWith(valueLowerCase)) {
+      if (el.textContent.toLowerCase().startsWith(valueLowerCase)) {
         this.domElements.optionsContainerList.append(el);
       } else {
         el.remove();
@@ -193,7 +193,7 @@ class IconicMultiSelect {
     });
 
     const hasResults = Array.from(this.domElements.options).some((el) =>
-      el.dataset.value.toLowerCase().startsWith(valueLowerCase)
+      el.textContent.toLowerCase().startsWith(valueLowerCase)
     );
     this._showNoResults(!hasResults);
   }
