@@ -22,7 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*!
- * IconicMultiSelect v0.3.2
+ * IconicMultiSelect v0.3.3
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
@@ -207,14 +207,14 @@ var IconicMultiSelect = function () {
 
       var valueLowerCase = value.toLowerCase();
       this.domElements.options.forEach(function (el) {
-        if (el.dataset.value.toLowerCase().startsWith(valueLowerCase)) {
+        if (el.textContent.toLowerCase().startsWith(valueLowerCase)) {
           _this4.domElements.optionsContainerList.append(el);
         } else {
           el.remove();
         }
       });
       var hasResults = Array.from(this.domElements.options).some(function (el) {
-        return el.dataset.value.toLowerCase().startsWith(valueLowerCase);
+        return el.textContent.toLowerCase().startsWith(valueLowerCase);
       });
 
       this._showNoResults(!hasResults);
