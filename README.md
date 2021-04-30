@@ -8,6 +8,10 @@
   <img src="./assets/iconic-multiselect.png">
 </p>
 
+## Demo
+
+#### [Click here](https://https://sidneywm.github.io/iconic-multiselect/)
+
 ## Getting Started
 
 ### 1. Link the required files
