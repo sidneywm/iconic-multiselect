@@ -1,11 +1,11 @@
 /*!
- * IconicMultiSelect v0.3.1
+ * IconicMultiSelect v0.3.2
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.3.1
+ * @version IconicMultiSelect v0.3.2
  * @licence  MIT
  */
 class IconicMultiSelect {
@@ -239,7 +239,7 @@ class IconicMultiSelect {
   _handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
       const isOpen = this.domElements.optionsContainer.style.display === "block";
-      // An updated view of the container is needed
+      // An updated view of the container is needed because of the filtering option
       const optionsContainerList = document.querySelector(`.${this.prefix + "multiselect__options > ul"}`);
 
       if (!isOpen) {
@@ -261,6 +261,7 @@ class IconicMultiSelect {
 
         selected = selected[action[event.key] + "ElementSibling"];
 
+        // Go to start or end of the popup list
         if (!selected) {
           selected =
             optionsContainerList.children[action[event.key] === "next" ? 0 : optionsContainerList.children.length - 1];
@@ -561,9 +562,10 @@ class IconicMultiSelect {
           border: none;
           flex-basis: 40px;
           flex-grow: 1;
+          height: 24px;        
           margin-bottom: 4px;
           min-width: 40px;
-          outline: none;            
+          outline: none;    
         }
       </style>
       `;

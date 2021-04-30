@@ -1,6 +1,6 @@
 {
   "name": "@iconic/multiselect",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A multiselect component in Pure JS - Compatible with IE11",
   "main": "src/multi-select.js",
   "scripts": {
