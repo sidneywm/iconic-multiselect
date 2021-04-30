@@ -8,9 +8,7 @@
   <img src="./assets/iconic-multiselect.png">
 </p>
 
-## Demo
-
-#### [Click here](https://https://sidneywm.github.io/iconic-multiselect/)
+### [Try live demo](https://sidneywm.github.io/iconic-multiselect/)
 
 ## Getting Started
 
