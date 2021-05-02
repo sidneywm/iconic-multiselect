@@ -1,11 +1,11 @@
 /*!
- * IconicMultiSelect v0.4.1
+ * IconicMultiSelect v0.4.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.4.1
+ * @version IconicMultiSelect v0.4.0
  * @licence  MIT
  */
 class IconicMultiSelect {
