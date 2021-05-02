@@ -283,7 +283,6 @@ class IconicMultiSelect {
    * @private
    */
   _handleBackspace(e) {
-    e.preventDefault();
     if (e.keyCode === 8 && e.target.value === "") {
       const lastSelectedOption =
         this.selectedOptions.length > 0 ? this.selectedOptions[this.selectedOptions.length - 1] : null;

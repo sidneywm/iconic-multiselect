@@ -22,7 +22,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*!
- * IconicMultiSelect v0.3.3
+ * IconicMultiSelect v0.4.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
@@ -302,8 +302,6 @@ var IconicMultiSelect = function () {
   }, {
     key: "_handleBackspace",
     value: function _handleBackspace(e) {
-      e.preventDefault();
-
       if (e.keyCode === 8 && e.target.value === "") {
         var lastSelectedOption = this.selectedOptions.length > 0 ? this.selectedOptions[this.selectedOptions.length - 1] : null;
 
