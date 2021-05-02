@@ -1,11 +1,11 @@
 /*!
- * IconicMultiSelect v0.4.0
+ * IconicMultiSelect v0.4.1
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.4.0
+ * @version IconicMultiSelect v0.4.1
  * @licence  MIT
  */
 class IconicMultiSelect {
@@ -283,7 +283,6 @@ class IconicMultiSelect {
    * @private
    */
   _handleBackspace(e) {
-    e.preventDefault();
     if (e.keyCode === 8 && e.target.value === "") {
       const lastSelectedOption =
         this.selectedOptions.length > 0 ? this.selectedOptions[this.selectedOptions.length - 1] : null;
