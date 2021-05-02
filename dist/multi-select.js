@@ -21,7 +21,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*!
- * IconicMultiSelect v0.3.3
+ * IconicMultiSelect v0.4.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
@@ -121,7 +121,7 @@ var IconicMultiSelect = function () {
 
       removeBtn.addEventListener("click", function () {
         var target = Array.from(_this.domElements.options).find(function (el) {
-          return el.dataset.value === option.value;
+          return el.dataset.value == option.value;
         });
 
         _this._handleOption(target);
@@ -134,7 +134,7 @@ var IconicMultiSelect = function () {
 
       this.selectedOptions.forEach(function (el) {
         var targetLastSelectedOption = Array.from(_this2.domElements.options).find(function (t) {
-          return t.dataset.value === el.value;
+          return t.dataset.value == el.value;
         });
 
         _this2._handleOption(targetLastSelectedOption, false);
@@ -179,6 +179,7 @@ var IconicMultiSelect = function () {
       });
       this.domElements.input.addEventListener("focus", function () {
         _this3.domElements.optionsContainer.style.display = "block";
+        _this3.domElements.input.placeholder = "";
       });
       this.domElements.input.addEventListener("input", function (_ref3) {
         var value = _ref3.target.value;
@@ -307,6 +308,10 @@ var IconicMultiSelect = function () {
           var targetLastSelectedOption = document.querySelector("li[data-value=\"".concat(lastSelectedOption.value, "\"]"));
 
           this._handleOption(targetLastSelectedOption);
+
+          if (this.selectedOptions.length === 0) {
+            this.domElements.optionsContainer.style.display = "none";
+          }
         }
       }
     }
@@ -432,7 +437,7 @@ var IconicMultiSelect = function () {
   }, {
     key: "_injectCss",
     value: function _injectCss() {
-      var css = "\n      <style>\n        .".concat(this.prefix, "multiselect__container {\n          align-items: center;\n          background-color: #fff;\n          border-radius: 2px;\n          border: 1px solid rgba(0,0,0,.08);\n          box-sizing: border-box;\n          display: flex;\n          font-family: Arial,Helvetica,sans-serif;\n          min-height: 40px;\n          padding: 4px 8px 0 8px;\n          position: relative;\n          width: 354px;\n        }\n\n        .").concat(this.prefix, "multiselect__container:after {\n          content:'';\n          min-height:inherit;\n          font-size:0;\n        }\n\n        .").concat(this.prefix, "multiselect__container > * {\n          color: #656565;\n          font-size: 14px;\n        }\n\n        .").concat(this.prefix + "multiselect__wrapper", " {\n          display: flex;\n          flex-wrap: wrap;\n          height: 100%;\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__clear-btn {\n           cursor: pointer;\n           margin-bottom: 4px;\n           margin-left: 4px;\n        }\n\n        .").concat(this.prefix, "multiselect__options {\n          background-color: #f6f6f6;\n          border-radius: 2px;\n          border: 1px solid rgba(0,0,0,.08);\n          left: -1px;\n          position: absolute;\n          top: calc(100% + 2px);\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul {\n          list-style: none;\n          margin: 0;\n          padding: 2px 0;\n          max-height: 120px;\n          overflow: auto;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li {\n          cursor: pointer;\n          padding: 4px 8px;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-results, \n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-data {\n          margin: 0;\n          padding: 8px;\n          text-align: center;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected {\n          background-color: #ff6358;\n          color: #fff;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected:hover {\n          background-color: #eb5b51;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li:hover {\n          background-color: #dedede;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.arrow-selected {\n          border: 2px solid rgb(101, 101, 101, 0.5);\n        }\n\n        .").concat(this.prefix, "multiselect__selected {\n          background-color: #656565;\n          border-radius: 2px;\n          color: #fff;\n          margin-bottom: 4px;\n          margin-right: 4px;\n          padding: 4px 8px;\n          display: flex;\n          align-items: center;\n        }\n\n        .").concat(this.prefix, "multiselect__selected .").concat(this.prefix, "multiselect__remove-btn {\n          cursor: pointer;\n          margin-left: 6px;\n        }\n\n        .").concat(this.prefix, "multiselect__input {\n          border: none;\n          flex-basis: 40px;\n          flex-grow: 1;\n          height: 24px;        \n          margin-bottom: 4px;\n          min-width: 40px;\n          outline: none;    \n        }\n      </style>\n      ");
+      var css = "\n      <style>\n        .".concat(this.prefix, "multiselect__container {\n          -webkit-box-align: center;\n          -ms-flex-align: center;\n              align-items: center;\n          background-color: #fff;\n          border-radius: 2px;\n          -webkit-box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;\n                  box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;\n          -webkit-box-sizing: border-box;\n                  box-sizing: border-box;\n          display: -webkit-box;\n          display: -ms-flexbox;\n          display: flex;\n          font-family: Arial,Helvetica,sans-serif;\n          min-height: 36px;\n          padding: 4px 8px 0 8px;\n          position: relative;\n          width: 354px;\n        }\n\n        .").concat(this.prefix, "multiselect__container:after {\n          content:'';\n          min-height:inherit;\n          font-size:0;\n        }\n\n        .").concat(this.prefix, "multiselect__container > * {\n          color: #656565;\n          font-size: 14px;\n        }\n\n        .").concat(this.prefix + "multiselect__wrapper", " {\n          display: -webkit-box;\n          display: -ms-flexbox;\n          display: flex;\n          -ms-flex-wrap: wrap;\n              flex-wrap: wrap;\n          height: 100%;\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__clear-btn {\n           cursor: pointer;\n           margin-bottom: 4px;\n           margin-left: 4px;\n        }\n\n        .").concat(this.prefix, "multiselect__options {\n          background-color: #f6f6f6;\n          border-radius: 2px;\n          -webkit-box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;\n          box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;\n          left: -1px;\n          position: absolute;\n          top: calc(100% + 3px);\n          width: 100%;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul {\n          list-style: none;\n          margin: 0;\n          padding: 2px 0;\n          max-height: 120px;\n          overflow: auto;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li {\n          cursor: pointer;\n          padding: 4px 8px;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-results, \n        .").concat(this.prefix, "multiselect__options ul p.").concat(this.prefix, "multiselect__options--no-data {\n          margin: 0;\n          padding: 8px;\n          text-align: center;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected {\n          background-color: #ff6358;\n          color: #fff;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.").concat(this.prefix, "multiselect__options--selected:hover {\n          background-color: #eb5b51;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li:hover {\n          background-color: #dedede;\n        }\n\n        .").concat(this.prefix, "multiselect__options ul li.arrow-selected {\n          border: 2px solid rgba(101, 101, 101, 0.5);\n        }\n\n        .").concat(this.prefix, "multiselect__selected {\n          background-color: #656565;\n          border-radius: 2px;\n          color: #fff;\n          margin-bottom: 4px;\n          margin-right: 4px;\n          padding: 4px 8px;\n          display: -webkit-box;\n          display: -ms-flexbox;\n          display: flex;\n          -webkit-box-align: center;\n              -ms-flex-align: center;\n                  align-items: center;\n        }\n\n        .").concat(this.prefix, "multiselect__selected .").concat(this.prefix, "multiselect__remove-btn {\n          cursor: pointer;\n          margin-left: 6px;\n        }\n\n        .").concat(this.prefix, "multiselect__input {\n          border: none;\n          -ms-flex-preferred-size: 40px;\n              flex-basis: 40px;\n          -webkit-box-flex: 1;\n              -ms-flex-positive: 1;\n                  flex-grow: 1;\n          height: 24px;        \n          margin-bottom: 4px;\n          min-width: 40px;\n          outline: none;      \n        }\n      </style>\n      ");
       if (!this.customCss) document.querySelector("head").insertAdjacentHTML("beforeend", css);
       if (this.customCss) this.prefix = "";
     }
