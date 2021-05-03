@@ -8,7 +8,7 @@
   <img src="./assets/iconic-multiselect.png">
 </p>
 
-:rocket: ### [Try live demo](https://sidneywm.github.io/iconic-multiselect/)
+### :rocket: [Try live demo](https://sidneywm.github.io/iconic-multiselect/)
 
 ## Getting Started
 
