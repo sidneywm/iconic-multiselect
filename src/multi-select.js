@@ -161,7 +161,9 @@ class IconicMultiSelect {
     });
 
     this.domElements.input.addEventListener("input", ({ target: { value } }) => {
-      this._filterOptions(value);
+      if (this.domElements.options.length > 0) {
+        this._filterOptions(value);
+      }
     });
 
     this.domElements.input.addEventListener("keydown", (e) => {
@@ -514,7 +516,7 @@ class IconicMultiSelect {
           border-radius: 2px;
           -webkit-box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;
           box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;
-          left: -1px;
+          left: 0;
           position: absolute;
           top: calc(100% + 3px);
           width: 100%;
