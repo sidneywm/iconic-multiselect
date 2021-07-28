@@ -1,13 +1,52 @@
 /*!
- * IconicMultiSelect v0.4.0
+ * IconicMultiSelect v0.5.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.4.0
+ * @version IconicMultiSelect v0.5.0
  * @licence  MIT
  */
+
+const cross = `
+<svg
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M6.2253 4.81108C5.83477 4.42056 5.20161 4.42056 4.81108 4.81108C4.42056 5.20161 4.42056 5.83477 4.81108 6.2253L10.5858 12L4.81114 17.7747C4.42062 18.1652 4.42062 18.7984 4.81114 19.1889C5.20167 19.5794 5.83483 19.5794 6.22535 19.1889L12 13.4142L17.7747 19.1889C18.1652 19.5794 18.7984 19.5794 19.1889 19.1889C19.5794 18.7984 19.5794 18.1652 19.1889 17.7747L13.4142 12L19.189 6.2253C19.5795 5.83477 19.5795 5.20161 19.189 4.81108C18.7985 4.42056 18.1653 4.42056 17.7748 4.81108L12 10.5858L6.2253 4.81108Z"
+    fill="currentColor"
+  />
+</svg>
+`;
+
+/**
+ * ScrollIntoView - This small utility reproduces the behavior of .scrollIntoView({ block: "nearest", inline: "nearest" })
+ * This is for IE compatibility without a need of a polyfill
+ * (c) 2021 Sidney Wimart.
+ */
+const scrollIntoView = (parent, child) => {
+  const rectParent = parent.getBoundingClientRect();
+  const rectChild = child.getBoundingClientRect();
+
+  // Detect if not visible at top and then scroll to the top
+  if (!(rectParent.top < rectChild.bottom - child.offsetHeight)) {
+    parent.scrollTop = child.clientHeight + (child.offsetTop - child.offsetHeight);
+  }
+
+  // Detect if not visible at bottom and then scroll to the bottom
+  if (!(rectParent.bottom > rectChild.top + child.offsetHeight)) {
+    parent.scrollTop =
+      child.clientHeight +
+      (child.offsetTop - child.offsetHeight) -
+      (parent.offsetHeight - (child.offsetHeight + (child.offsetHeight - child.clientHeight)));
+  }
+};
+
 class IconicMultiSelect {
   customCss;
   data;
@@ -62,7 +101,24 @@ class IconicMultiSelect {
         input: document.querySelector(`.${this.prefix + "multiselect__input"}`),
         optionsContainer: document.querySelector(`.${this.prefix + "multiselect__options"}`),
         optionsContainerList: document.querySelector(`.${this.prefix + "multiselect__options > ul"}`),
-        options: document.querySelectorAll(`.${this.prefix + "multiselect__options"} > ul > li`),
+        options: {
+          list: document.querySelectorAll(`.${this.prefix + "multiselect__options"} > ul > li`),
+          find: function (callbackFn) {
+            for (let i = 0; i < this.list.length; i++) {
+              const node = this.list[i];
+              if (callbackFn(node)) return node;
+            }
+            return undefined;
+
+          },
+          some: function (callbackFn) {
+            for (let i = 0; i < this.list.length; i++) {
+              const node = this.list[i];
+              if (callbackFn(node)) return true;
+            }
+            return false;
+          },
+        },
       };
 
       this._enableEventListenners();
@@ -92,13 +148,13 @@ class IconicMultiSelect {
   _addOptionToList(option) {
     const html = `<span class="${this.prefix + "multiselect__selected"}" data-value="${option.value}">${
       option.text
-    }<span class="${this.prefix + "multiselect__remove-btn"}">&#10006;</span></span>`;
+    }<span class="${this.prefix + "multiselect__remove-btn"}">${cross}</span></span>`;
 
     this.domElements.input.insertAdjacentHTML("beforebegin", html);
 
     const { firstElementChild: removeBtn } = document.querySelector(`span[data-value="${option.value}"]`);
     removeBtn.addEventListener("click", () => {
-      const target = Array.from(this.domElements.options).find((el) => el.dataset.value == option.value);
+      const target = this.domElements.options.find((el) => el.dataset.value == option.value);
       this._handleOption(target);
     });
   }
@@ -108,11 +164,15 @@ class IconicMultiSelect {
    * @private
    */
   _clearSelection() {
-    this.selectedOptions.forEach((el) => {
-      const targetLastSelectedOption = Array.from(this.domElements.options).find((t) => t.dataset.value == el.value);
-      this._handleOption(targetLastSelectedOption, false);
-    });
-
+    for (let i = 0; i < this.selectedOptions.length; i++) {
+      const option = this.selectedOptions[i];
+      const target = this.domElements.options.find((el) => el.dataset.value == option.value);
+      target.classList.remove(`${this.prefix}multiselect__options--selected`);
+      this._removeOptionFromList(target.dataset.value);
+    }
+    this.selectedOptions = [];
+    this._handleClearSelectionBtn();
+    this._handlePlaceholder();
     this._dispatchEvent({
       action: "CLEAR_ALL_OPTIONS",
       selection: this.selectedOptions,
@@ -125,7 +185,7 @@ class IconicMultiSelect {
    */
   _closeList() {
     this.domElements.input.value = "";
-    this.domElements.optionsContainer.style.display = "none";
+    this.domElements.optionsContainer.classList.remove("visible");
     this._filterOptions("");
     this._removeAllArrowSelected();
   }
@@ -144,24 +204,36 @@ class IconicMultiSelect {
    * @private
    */
   _enableEventListenners() {
+    document.addEventListener("mouseup", ({ target }) => {
+      const container = document.getElementById("iconic5656-multiselect");
+      if (!container.contains(target)) {
+        this._filterOptions("");
+        this._closeList();
+        this._handlePlaceholder();
+      }
+    });
+
     this.domElements.clear.addEventListener("click", () => {
       this._clearSelection();
     });
 
-    this.domElements.options.forEach((option) => {
+    for (let i = 0; i < this.domElements.options.list.length; i++) {
+      const option = this.domElements.options.list[i];
       option.addEventListener("click", ({ target }) => {
         this._handleOption(target);
         this._closeList();
       });
-    });
+    }
 
     this.domElements.input.addEventListener("focus", () => {
-      this.domElements.optionsContainer.style.display = "block";
+      this.domElements.optionsContainer.classList.add("visible");
       this.domElements.input.placeholder = "";
     });
 
     this.domElements.input.addEventListener("input", ({ target: { value } }) => {
-      this._filterOptions(value);
+      if (this.domElements.options.list.length > 0) {
+        this._filterOptions(value);
+      }
     });
 
     this.domElements.input.addEventListener("keydown", (e) => {
@@ -177,26 +249,29 @@ class IconicMultiSelect {
    * @private
    */
   _filterOptions(value) {
-    const isOpen = this.domElements.optionsContainer.style.display === "block";
-
-    if (!isOpen && value.length > 0) {
-      this.domElements.optionsContainer.style.display = "block";
-    }
-
+    const isOpen = this.domElements.optionsContainer.classList.contains("visible");
     const valueLowerCase = value.toLowerCase();
 
-    this.domElements.options.forEach((el) => {
-      if (el.textContent.toLowerCase().startsWith(valueLowerCase)) {
-        this.domElements.optionsContainerList.append(el);
-      } else {
-        el.remove();
-      }
-    });
+    if (!isOpen && value.length > 0) {
+      this.domElements.optionsContainer.classList.add("visible");
+    }
 
-    const hasResults = Array.from(this.domElements.options).some((el) =>
-      el.textContent.toLowerCase().startsWith(valueLowerCase)
-    );
-    this._showNoResults(!hasResults);
+    if (this.domElements.options.list.length > 0) {
+
+      for (let i = 0; i < this.domElements.options.list.length; i++) {
+        const el = this.domElements.options.list[i];
+        if (el.textContent.toLowerCase().substring(0, valueLowerCase.length) === valueLowerCase) {
+          this.domElements.optionsContainerList.appendChild(el);
+        } else {
+          el.parentNode && el.parentNode.removeChild(el);
+        }
+      }
+
+      const hasResults = this.domElements.options.some(
+        (el) => el.textContent.toLowerCase().substring(0, valueLowerCase.length) === valueLowerCase
+      );
+      this._showNoResults(!hasResults);
+    }
   }
 
   /**
@@ -204,10 +279,15 @@ class IconicMultiSelect {
    * @private
    */
   _getDataFromSelectTag() {
-    return Array.from(this.selectContainer.options).map((option) => ({
-      text: option.text,
-      value: option.value,
-    }));
+    const arr = [];
+    const { options } = this.selectContainer;
+    for (let i = 0; i < options.length; i++) {
+      arr.push({
+        text: options[i].text,
+        value: options[i].value,
+      });
+    }
+    return arr;
   }
 
   /**
@@ -218,15 +298,20 @@ class IconicMultiSelect {
     if (this.data.length > 0 && this.valueField && this.textField) {
       const isValueFieldValid = typeof this.valueField === "string";
       const isTextFieldValid = typeof this.textField === "string";
+      const arr = [];
 
       if (!isValueFieldValid || !isTextFieldValid) {
         throw new Error("textField and valueField must be of type string");
       }
 
-      return this.data.map((item) => ({
-        value: item[this.valueField],
-        text: item[this.textField],
-      }));
+      for (let i = 0; i < this.data.length; i++) {
+        const item = this.data[i];
+        arr.push({
+          value: item[this.valueField],
+          text: item[this.textField],
+        });
+      }
+      return arr;
     } else {
       return null;
     }
@@ -239,18 +324,22 @@ class IconicMultiSelect {
    */
   _handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
-      const isOpen = this.domElements.optionsContainer.style.display === "block";
+      const isOpen = this.domElements.optionsContainer.classList.contains("visible");
       // An updated view of the container is needed because of the filtering option
       const optionsContainerList = document.querySelector(`.${this.prefix + "multiselect__options > ul"}`);
 
       if (!isOpen) {
-        this.domElements.optionsContainer.style.display = "block";
+        this.domElements.optionsContainer.classList.add("visible");
         optionsContainerList.firstElementChild.classList.add("arrow-selected");
         optionsContainerList.firstElementChild.scrollIntoView();
       } else {
         let selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
-        const scrollIntoViewOption = { block: "nearest", inline: "nearest" };
-        const action = { ArrowUp: "previous", Up: "previous", ArrowDown: "next", Down: "next" };
+        const action = {
+          ArrowUp: "previous",
+          Up: "previous",
+          ArrowDown: "next",
+          Down: "next",
+        };
 
         if (!selected) {
           optionsContainerList.firstElementChild.classList.add("arrow-selected");
@@ -267,12 +356,12 @@ class IconicMultiSelect {
           selected =
             optionsContainerList.children[action[event.key] === "next" ? 0 : optionsContainerList.children.length - 1];
           selected.classList.add("arrow-selected");
-          selected.scrollIntoView(scrollIntoViewOption);
+          scrollIntoView(optionsContainerList, selected);
           return;
         }
 
         selected.classList.add("arrow-selected");
-        selected.scrollIntoView(scrollIntoViewOption);
+        scrollIntoView(optionsContainerList, selected);
       }
     }
   }
@@ -292,7 +381,7 @@ class IconicMultiSelect {
         this._handleOption(targetLastSelectedOption);
 
         if (this.selectedOptions.length === 0) {
-          this.domElements.optionsContainer.style.display = "none";
+          this.domElements.optionsContainer.classList.remove("visible");
         }
       }
     }
@@ -319,40 +408,54 @@ class IconicMultiSelect {
    */
   _handleClearSelectionBtn() {
     if (this.selectedOptions.length > 0) {
-      this.domElements.clear.style.display = "block";
+      this.domElements.clear.style.display = "flex";
     } else {
       this.domElements.clear.style.display = "none";
     }
   }
 
   _handleOption(target, dispatchEvent = true) {
-    if (this.selectedOptions.some((el) => el.value == target.dataset.value)) {
-      target.classList.remove(`${this.prefix}multiselect__options--selected`);
-      this.selectedOptions = this.selectedOptions.filter((el) => el.value != target.dataset.value);
-      this._removeOptionFromList(target.dataset.value);
+    // Remove
+    for (let i = 0; i < this.selectedOptions.length; i++) {
+      const el = this.selectedOptions[i];
+      if (el.value == target.dataset.value) {
+        target.classList.remove(`${this.prefix}multiselect__options--selected`);
+        this.selectedOptions.splice(i, 1);
+        this._removeOptionFromList(target.dataset.value);
+        this._handleClearSelectionBtn();
+        this._handlePlaceholder();
 
-      dispatchEvent &&
-        this._dispatchEvent({
-          action: "REMOVE_OPTION",
-          value: target.dataset.value,
-          selection: this.selectedOptions,
-        });
-    } else {
-      const option = this.options.find((el) => el.value == target.dataset.value);
-      target.classList.add(`${this.prefix}multiselect__options--selected`);
-      this.selectedOptions = [...this.selectedOptions, option];
-      this._addOptionToList(option);
-
-      dispatchEvent &&
-        this._dispatchEvent({
-          action: "ADD_OPTION",
-          value: target.dataset.value,
-          selection: this.selectedOptions,
-        });
+        return (
+          dispatchEvent &&
+          this._dispatchEvent({
+            action: "REMOVE_OPTION",
+            value: target.dataset.value,
+            selection: this.selectedOptions,
+          })
+        );
+      }
     }
 
-    this._handleClearSelectionBtn();
-    this._handlePlaceholder();
+    // Add
+    for (let i = 0; i < this.options.length; i++) {
+      const option = this.options[i];
+      if (option.value == target.dataset.value) {
+        target.classList.add(`${this.prefix}multiselect__options--selected`);
+        this.selectedOptions = [...this.selectedOptions, option];
+        this._addOptionToList(option);
+        this._handleClearSelectionBtn();
+        this._handlePlaceholder();
+
+        return (
+          dispatchEvent &&
+          this._dispatchEvent({
+            action: "ADD_OPTION",
+            value: target.dataset.value,
+            selection: this.selectedOptions,
+          })
+        );
+      }
+    }
   }
 
   /**
@@ -369,11 +472,8 @@ class IconicMultiSelect {
 
   _removeAllArrowSelected() {
     const className = "arrow-selected";
-    this.domElements.options.forEach((el) => {
-      if (el.classList.contains(className)) {
-        el.classList.remove(className);
-      }
-    });
+    const target = this.domElements.options.find((el) => el.classList.contains(className));
+    target && target.classList.remove(className);
   }
 
   /**
@@ -383,7 +483,7 @@ class IconicMultiSelect {
    */
   _removeOptionFromList(value) {
     const optionDom = document.querySelector(`span[data-value="${value}"]`);
-    optionDom.remove();
+    optionDom && optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
   }
 
   /**
@@ -392,7 +492,7 @@ class IconicMultiSelect {
    */
   _renderOptionsList() {
     const html = `
-        <div style="display: none;" class="${this.prefix}multiselect__options">
+        <div class="${this.prefix}multiselect__options">
           <ul>
           ${
             this.options.length > 0
@@ -420,11 +520,11 @@ class IconicMultiSelect {
   _renderMultiselect() {
     this.selectContainer.style.display = "none";
     const html = `
-      <div class="${this.prefix + "multiselect__container"}">
+      <div id="iconic5656-multiselect" class="${this.prefix + "multiselect__container"}">
         <div class="${this.prefix + "multiselect__wrapper"}">
           <input class="${this.prefix + "multiselect__input"}" placeholder="${this.placeholder}" />
         </div>
-        <span style="display: none;" class="${this.prefix + "multiselect__clear-btn"}">&#10006;</span>
+        <span style="display: none;" class="${this.prefix + "multiselect__clear-btn"}">${cross}</span>
       </div>
     `;
 
@@ -451,7 +551,7 @@ class IconicMultiSelect {
       const html = `<p class="${this.prefix}multiselect__options--no-results">${this.noResults}</p>`;
       !dom && this.domElements.optionsContainerList.insertAdjacentHTML("beforeend", html);
     } else {
-      dom && dom.remove();
+      dom && dom.parentNode && dom.parentNode.removeChild(dom);
     }
   }
 
@@ -505,20 +605,37 @@ class IconicMultiSelect {
 
         .${this.prefix}multiselect__clear-btn {
            cursor: pointer;
+           align-items: center;
            margin-bottom: 4px;
            margin-left: 4px;
+        }
+
+        .${this.prefix}multiselect__clear-btn svg {
+          height: 20px;
+          width: 20px;
         }
 
         .${this.prefix}multiselect__options {
           background-color: #f6f6f6;
           border-radius: 2px;
-          -webkit-box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;
-          box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;
-          left: -1px;
+          left: 0;
+          max-height: 0;
+          overflow: hidden;
           position: absolute;
           top: calc(100% + 3px);
           width: 100%;
+          opacity: 0;
+          transition: max-height 0.1s ease;
         }
+
+        .${this.prefix}multiselect__options.visible {
+          max-height: 128px;
+          -webkit-box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;
+          box-shadow: 0 1px 3px 0 #d1d1d2, 0 0 0 1px #d1d1d2;
+          opacity: 1;
+          transition: max-height 0.2s ease;
+        }
+
 
         .${this.prefix}multiselect__options ul {
           list-style: none;
@@ -574,7 +691,13 @@ class IconicMultiSelect {
 
         .${this.prefix}multiselect__selected .${this.prefix}multiselect__remove-btn {
           cursor: pointer;
+          display: flex;
           margin-left: 6px;
+        }
+
+        .${this.prefix}multiselect__selected .${this.prefix}multiselect__remove-btn svg {
+          height: 16px;
+          width: 16px;
         }
 
         .${this.prefix}multiselect__input {
