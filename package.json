@@ -26,5 +26,8 @@
     "gulp-minify": "^3.1.0",
     "gulp-plumber": "^1.2.1",
     "gulp-decomment": "^0.2.2"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-private-methods": "^7.14.5"
   }
 }

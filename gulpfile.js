@@ -13,7 +13,7 @@ function jsBuild(done) {
     .pipe(concat("multi-select.js"))
     .pipe(
       babel({
-        plugins: ["@babel/plugin-proposal-class-properties"],
+        plugins: ["@babel/plugin-proposal-class-properties", "@babel/plugin-proposal-private-methods"],
         presets: [
           [
             "@babel/env",

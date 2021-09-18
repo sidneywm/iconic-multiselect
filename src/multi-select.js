@@ -48,11 +48,11 @@ const scrollIntoView = (parent, child) => {
 };
 
 class IconicMultiSelect {
-  customCss;
   data;
   domElements = {};
   event = () => {};
   itemTemplate;
+  multiselect;
   noData;
   noResults;
   options = [];
@@ -74,24 +74,12 @@ class IconicMultiSelect {
    * @param { string } textField - Field to select in the object for the text.
    * @param { string } valueField - Field to select in the object for the value.
    */
-  constructor({
-    data,
-    itemTemplate,
-    noData,
-    noResults,
-    placeholder,
-    prefix,
-    select,
-    tagTemplate,
-    textField,
-    valueField,
-  }) {
+  constructor({ data, itemTemplate, noData, noResults, placeholder, select, tagTemplate, textField, valueField }) {
     this.data = data ?? [];
     this.itemTemplate = itemTemplate ?? null;
     this.noData = noData ?? "No data found.";
     this.noResults = noResults ?? "No results found.";
     this.placeholder = placeholder ?? "Select...";
-    this.prefix = prefix ?? "iconic-";
     this.selectContainer = document.querySelector(select);
     this.tagTemplate = tagTemplate ?? null;
     this.textField = textField ?? null;
@@ -107,18 +95,18 @@ class IconicMultiSelect {
       if (this.itemTemplate && this.data.length === 0)
         throw new Error("itemTemplate must be initialized with data from the component settings");
 
-      this.options = this.data.length > 0 ? this._getDataFromSettings() : this._getDataFromSelectTag();
+      this.options = this.data.length > 0 ? this.#getDataFromSettings() : this.#getDataFromSelectTag();
 
-      this._renderMultiselect();
-      this._renderOptionsList();
+      this.#renderMultiselect();
+      this.#renderOptionsList();
 
       this.domElements = {
-        clear: document.querySelector(`.${this.prefix + "multiselect__clear-btn"}`),
-        input: document.querySelector(`.${this.prefix + "multiselect__input"}`),
-        optionsContainer: document.querySelector(`.${this.prefix + "multiselect__options"}`),
-        optionsContainerList: document.querySelector(`.${this.prefix + "multiselect__options > ul"}`),
+        clear: this.multiselect.querySelector(`.multiselect__clear-btn`),
+        input: this.multiselect.querySelector(`.multiselect__input`),
+        optionsContainer: this.multiselect.querySelector(`.multiselect__options`),
+        optionsContainerList: this.multiselect.querySelector(`.multiselect__options > ul`),
         options: {
-          list: document.querySelectorAll(`.${this.prefix + "multiselect__options"} > ul > li`),
+          list: this.multiselect.querySelectorAll(`.multiselect__options > ul > li`),
           find: function (callbackFn) {
             for (let i = 0; i < this.list.length; i++) {
               const node = this.list[i];
@@ -136,7 +124,7 @@ class IconicMultiSelect {
         },
       };
 
-      this._enableEventListenners();
+      this.#enableEventListenners();
     } else {
       throw new Error(`The selector '${element}' did not select any valid select tag.`);
     }
@@ -160,17 +148,17 @@ class IconicMultiSelect {
    * @param { Object: { text: string; value: string; }} option
    * @private
    */
-  _addOptionToList(option, index) {
-    const html = `<span class="${this.prefix + "multiselect__selected"}" data-value="${option.value}">${
-      this.tagTemplate ? this._processTemplate(this.tagTemplate, index) : option.text
-    }<span class="${this.prefix + "multiselect__remove-btn"}">${cross}</span></span>`;
+  #addOptionToList(option, index) {
+    const html = `<span class="multiselect__selected" data-value="${option.value}">${
+      this.tagTemplate ? this.#processTemplate(this.tagTemplate, index) : option.text
+    }<span class="multiselect__remove-btn">${cross}</span></span>`;
 
     this.domElements.input.insertAdjacentHTML("beforebegin", html);
 
-    const { lastElementChild: removeBtn } = document.querySelector(`span[data-value="${option.value}"]`);
+    const { lastElementChild: removeBtn } = this.multiselect.querySelector(`span[data-value="${option.value}"]`);
     removeBtn.addEventListener("click", () => {
       const target = this.domElements.options.find((el) => el.dataset.value == option.value);
-      this._handleOption(target);
+      this.#handleOption(target);
     });
   }
 
@@ -178,17 +166,17 @@ class IconicMultiSelect {
    * Clears all selected options.
    * @private
    */
-  _clearSelection() {
+  #clearSelection() {
     for (let i = 0; i < this.selectedOptions.length; i++) {
       const option = this.selectedOptions[i];
       const target = this.domElements.options.find((el) => el.dataset.value == option.value);
-      target.classList.remove(`${this.prefix}multiselect__options--selected`);
-      this._removeOptionFromList(target.dataset.value);
+      target.classList.remove(`multiselect__options--selected`);
+      this.#removeOptionFromList(target.dataset.value);
     }
     this.selectedOptions = [];
-    this._handleClearSelectionBtn();
-    this._handlePlaceholder();
-    this._dispatchEvent({
+    this.#handleClearSelectionBtn();
+    this.#handlePlaceholder();
+    this.#dispatchEvent({
       action: "CLEAR_ALL_OPTIONS",
       selection: this.selectedOptions,
     });
@@ -198,11 +186,11 @@ class IconicMultiSelect {
    * Close the options container.
    * @private
    */
-  _closeList() {
+  #closeList() {
     this.domElements.input.value = "";
     this.domElements.optionsContainer.classList.remove("visible");
-    this._filterOptions("");
-    this._removeAllArrowSelected();
+    this.#filterOptions("");
+    this.#removeAllArrowSelected();
   }
 
   /**
@@ -210,7 +198,7 @@ class IconicMultiSelect {
    * @param { object : { action: string; selection: { option: string; text: string; }[]; value?: string; } } event
    * @private
    */
-  _dispatchEvent(event) {
+  #dispatchEvent(event) {
     this.event(event);
   }
 
@@ -218,25 +206,24 @@ class IconicMultiSelect {
    * Enables all main event listenners.
    * @private
    */
-  _enableEventListenners() {
+  #enableEventListenners() {
     document.addEventListener("mouseup", ({ target }) => {
-      const container = document.getElementById("iconic5656-multiselect");
-      if (!container.contains(target)) {
-        this._filterOptions("");
-        this._closeList();
-        this._handlePlaceholder();
+      if (!this.multiselect.contains(target)) {
+        this.#filterOptions("");
+        this.#closeList();
+        this.#handlePlaceholder();
       }
     });
 
     this.domElements.clear.addEventListener("click", () => {
-      this._clearSelection();
+      this.#clearSelection();
     });
 
     for (let i = 0; i < this.domElements.options.list.length; i++) {
       const option = this.domElements.options.list[i];
       option.addEventListener("click", ({ target }) => {
-        this._handleOption(target);
-        this._closeList();
+        this.#handleOption(target);
+        this.#closeList();
       });
     }
 
@@ -247,14 +234,14 @@ class IconicMultiSelect {
 
     this.domElements.input.addEventListener("input", ({ target: { value } }) => {
       if (this.domElements.options.list.length > 0) {
-        this._filterOptions(value);
+        this.#filterOptions(value);
       }
     });
 
     this.domElements.input.addEventListener("keydown", (e) => {
-      this._handleArrows(e);
-      this._handleBackspace(e);
-      this._handleEnter(e);
+      this.#handleArrows(e);
+      this.#handleBackspace(e);
+      this.#handleEnter(e);
     });
   }
 
@@ -263,7 +250,7 @@ class IconicMultiSelect {
    * @param { string } value
    * @private
    */
-  _filterOptions(value) {
+  #filterOptions(value) {
     const isOpen = this.domElements.optionsContainer.classList.contains("visible");
     const valueLowerCase = value.toLowerCase();
 
@@ -289,7 +276,7 @@ class IconicMultiSelect {
             .toLowerCase()
             .substring(0, valueLowerCase.length) === valueLowerCase
       );
-      this._showNoResults(!hasResults);
+      this.#showNoResults(!hasResults);
     }
   }
 
@@ -297,7 +284,7 @@ class IconicMultiSelect {
    * Gets data from select tag.
    * @private
    */
-  _getDataFromSelectTag() {
+  #getDataFromSelectTag() {
     const arr = [];
     const { options } = this.selectContainer;
     for (let i = 0; i < options.length; i++) {
@@ -313,7 +300,7 @@ class IconicMultiSelect {
    * Gets data from settings.
    * @private
    */
-  _getDataFromSettings() {
+  #getDataFromSettings() {
     if (this.data.length > 0 && this.valueField && this.textField) {
       const isValueFieldValid = typeof this.valueField === "string";
       const isTextFieldValid = typeof this.textField === "string";
@@ -341,18 +328,18 @@ class IconicMultiSelect {
    * @param { Event } event
    * @private
    */
-  _handleArrows(event) {
+  #handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
       const isOpen = this.domElements.optionsContainer.classList.contains("visible");
       // An updated view of the container is needed because of the filtering option
-      const optionsContainerList = document.querySelector(`.${this.prefix + "multiselect__options > ul"}`);
+      const optionsContainerList = this.multiselect.querySelector(`.multiselect__options > ul`);
 
       if (!isOpen) {
         this.domElements.optionsContainer.classList.add("visible");
         optionsContainerList.firstElementChild.classList.add("arrow-selected");
         optionsContainerList.firstElementChild.scrollIntoView();
       } else {
-        let selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
+        let selected = this.multiselect.querySelector(`.multiselect__options ul li.arrow-selected`);
         const action = {
           ArrowUp: "previous",
           Up: "previous",
@@ -390,14 +377,14 @@ class IconicMultiSelect {
    * @param { Event } e
    * @private
    */
-  _handleBackspace(e) {
+  #handleBackspace(e) {
     if (e.keyCode === 8 && e.target.value === "") {
       const lastSelectedOption =
         this.selectedOptions.length > 0 ? this.selectedOptions[this.selectedOptions.length - 1] : null;
 
       if (lastSelectedOption) {
-        const targetLastSelectedOption = document.querySelector(`li[data-value="${lastSelectedOption.value}"]`);
-        this._handleOption(targetLastSelectedOption);
+        const targetLastSelectedOption = this.multiselect.querySelector(`li[data-value="${lastSelectedOption.value}"]`);
+        this.#handleOption(targetLastSelectedOption);
 
         if (this.selectedOptions.length === 0) {
           this.domElements.optionsContainer.classList.remove("visible");
@@ -411,12 +398,12 @@ class IconicMultiSelect {
    * @param { Event } event
    * @private
    */
-  _handleEnter(event) {
+  #handleEnter(event) {
     if (event.keyCode === 13) {
-      const selected = document.querySelector(`.${this.prefix}multiselect__options ul li.arrow-selected`);
+      const selected = this.multiselect.querySelector(`.multiselect__options ul li.arrow-selected`);
       if (selected) {
-        this._handleOption(selected);
-        this._closeList();
+        this.#handleOption(selected);
+        this.#closeList();
       }
     }
   }
@@ -425,7 +412,7 @@ class IconicMultiSelect {
    * Shows clear selection button if some options are selected.
    * @private
    */
-  _handleClearSelectionBtn() {
+  #handleClearSelectionBtn() {
     if (this.selectedOptions.length > 0) {
       this.domElements.clear.style.display = "flex";
     } else {
@@ -433,20 +420,20 @@ class IconicMultiSelect {
     }
   }
 
-  _handleOption(target, dispatchEvent = true) {
+  #handleOption(target, dispatchEvent = true) {
     // Remove
     for (let i = 0; i < this.selectedOptions.length; i++) {
       const el = this.selectedOptions[i];
       if (el.value == target.dataset.value) {
-        target.classList.remove(`${this.prefix}multiselect__options--selected`);
+        target.classList.remove(`multiselect__options--selected`);
         this.selectedOptions.splice(i, 1);
-        this._removeOptionFromList(target.dataset.value);
-        this._handleClearSelectionBtn();
-        this._handlePlaceholder();
+        this.#removeOptionFromList(target.dataset.value);
+        this.#handleClearSelectionBtn();
+        this.#handlePlaceholder();
 
         return (
           dispatchEvent &&
-          this._dispatchEvent({
+          this.#dispatchEvent({
             action: "REMOVE_OPTION",
             value: target.dataset.value,
             selection: this.selectedOptions,
@@ -459,15 +446,15 @@ class IconicMultiSelect {
     for (let i = 0; i < this.options.length; i++) {
       const option = this.options[i];
       if (option.value == target.dataset.value) {
-        target.classList.add(`${this.prefix}multiselect__options--selected`);
+        target.classList.add(`multiselect__options--selected`);
         this.selectedOptions = [...this.selectedOptions, option];
-        this._addOptionToList(option, i);
-        this._handleClearSelectionBtn();
-        this._handlePlaceholder();
+        this.#addOptionToList(option, i);
+        this.#handleClearSelectionBtn();
+        this.#handlePlaceholder();
 
         return (
           dispatchEvent &&
-          this._dispatchEvent({
+          this.#dispatchEvent({
             action: "ADD_OPTION",
             value: target.dataset.value,
             selection: this.selectedOptions,
@@ -481,7 +468,7 @@ class IconicMultiSelect {
    * Shows the placeholder if no options are selected.
    * @private
    */
-  _handlePlaceholder() {
+  #handlePlaceholder() {
     if (this.selectedOptions.length > 0) {
       this.domElements.input.placeholder = "";
     } else {
@@ -494,7 +481,7 @@ class IconicMultiSelect {
    * @param { string } template
    * @private
    */
-  _processTemplate(template, index) {
+  #processTemplate(template, index) {
     let processedTemplate = template;
     const objAttr = template.match(/\$\{(\w+)\}/g).map((e) => e.replace(/\$\{|\}/g, ""));
 
@@ -506,7 +493,7 @@ class IconicMultiSelect {
     return processedTemplate;
   }
 
-  _removeAllArrowSelected() {
+  #removeAllArrowSelected() {
     const className = "arrow-selected";
     const target = this.domElements.options.find((el) => el.classList.contains(className));
     target && target.classList.remove(className);
@@ -517,8 +504,8 @@ class IconicMultiSelect {
    * @param { string } value
    * @private
    */
-  _removeOptionFromList(value) {
-    const optionDom = document.querySelector(`span[data-value="${value}"]`);
+  #removeOptionFromList(value) {
+    const optionDom = this.multiselect.querySelector(`span[data-value="${value}"]`);
     optionDom && optionDom.parentNode && optionDom.parentNode.removeChild(optionDom);
   }
 
@@ -526,9 +513,9 @@ class IconicMultiSelect {
    * Renders the multiselect options list view.
    * @private
    */
-  _renderOptionsList() {
+  #renderOptionsList() {
     const html = `
-        <div class="${this.prefix}multiselect__options">
+        <div class="multiselect__options">
           <ul>
           ${
             this.options.length > 0 && !this.itemTemplate
@@ -547,36 +534,48 @@ class IconicMultiSelect {
               ? this.options
                   .map((option, index) => {
                     return `
-              <li data-value="${option.value}">${this._processTemplate(this.itemTemplate, index)}</li>
+              <li data-value="${option.value}">${this.#processTemplate(this.itemTemplate, index)}</li>
             `;
                   })
                   .join("")
               : ""
           }
-          ${this._showNoData(this.options.length === 0)}
+          ${this.#showNoData(this.options.length === 0)}
           </ul>
         </div>
       `;
 
-    document.querySelector(`.${this.prefix + "multiselect__container"}`).insertAdjacentHTML("beforeend", html);
+    this.multiselect.insertAdjacentHTML("beforeend", html);
   }
 
   /**
    * Renders the multiselect view.
    * @private
    */
-  _renderMultiselect() {
+  #renderMultiselect() {
     this.selectContainer.style.display = "none";
+    const id = "iconic-" + this.#generateId(20);
     const html = `
-      <div id="iconic5656-multiselect" class="${this.prefix + "multiselect__container"}">
-        <div class="${this.prefix + "multiselect__wrapper"}">
-          <input class="${this.prefix + "multiselect__input"}" placeholder="${this.placeholder}" />
+      <div id="${id}" class="multiselect__container">
+        <div class="multiselect__wrapper">
+          <input class="multiselect__input" placeholder="${this.placeholder}" />
         </div>
-        <span style="display: none;" class="${this.prefix + "multiselect__clear-btn"}">${cross}</span>
+        <span style="display: none;" class="multiselect__clear-btn">${cross}</span>
       </div>
     `;
 
     this.selectContainer.insertAdjacentHTML("afterend", html);
+    this.multiselect = document.querySelector(`#${id}`);
+  }
+
+  #generateId(length) {
+    let result = "";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
   /**
@@ -584,8 +583,8 @@ class IconicMultiSelect {
    * @param { boolean } condition
    * @private
    */
-  _showNoData(condition) {
-    return condition ? `<p class="${this.prefix}multiselect__options--no-data">${this.noData}</p>` : "";
+  #showNoData(condition) {
+    return condition ? `<p class="multiselect__options--no-data">${this.noData}</p>` : "";
   }
 
   /**
@@ -593,10 +592,10 @@ class IconicMultiSelect {
    * @param { boolean } condition
    * @private
    */
-  _showNoResults(condition) {
-    const dom = document.querySelector(`.${this.prefix}multiselect__options--no-results`);
+  #showNoResults(condition) {
+    const dom = this.multiselect.querySelector(`.multiselect__options--no-results`);
     if (condition) {
-      const html = `<p class="${this.prefix}multiselect__options--no-results">${this.noResults}</p>`;
+      const html = `<p class="multiselect__options--no-results">${this.noResults}</p>`;
       !dom && this.domElements.optionsContainerList.insertAdjacentHTML("beforeend", html);
     } else {
       dom && dom.parentNode && dom.parentNode.removeChild(dom);
