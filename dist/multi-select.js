@@ -527,6 +527,8 @@ function _getDataFromSettings2() {
 
 function _handleArrows2(event) {
   if (event.keyCode === 40 || event.keyCode === 38) {
+    event.preventDefault();
+
     var isOpen = _classPrivateFieldGet(this, _domElements).optionsContainer.classList.contains("visible"); 
 
 
@@ -536,7 +538,7 @@ function _handleArrows2(event) {
       _classPrivateFieldGet(this, _domElements).optionsContainer.classList.add("visible");
 
       optionsContainerList.firstElementChild.classList.add("arrow-selected");
-      optionsContainerList.firstElementChild.scrollIntoView();
+      optionsContainerList.firstElementChild.scrollIntoView(false);
     } else {
       var selected = _classPrivateFieldGet(this, _multiselect).querySelector(".multiselect__options ul li.arrow-selected");
 
@@ -549,7 +551,7 @@ function _handleArrows2(event) {
 
       if (!selected) {
         optionsContainerList.firstElementChild.classList.add("arrow-selected");
-        optionsContainerList.firstElementChild.scrollIntoView();
+        optionsContainerList.firstElementChild.scrollIntoView(false);
         return;
       }
 

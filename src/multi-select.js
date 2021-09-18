@@ -316,6 +316,7 @@ class IconicMultiSelect {
    */
   #handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
+      event.preventDefault()
       const isOpen = this.#domElements.optionsContainer.classList.contains("visible");
       // An updated view of the container is needed because of the filtering option
       const optionsContainerList = this.#multiselect.querySelector(`.multiselect__options > ul`);
@@ -323,7 +324,7 @@ class IconicMultiSelect {
       if (!isOpen) {
         this.#domElements.optionsContainer.classList.add("visible");
         optionsContainerList.firstElementChild.classList.add("arrow-selected");
-        optionsContainerList.firstElementChild.scrollIntoView();
+        optionsContainerList.firstElementChild.scrollIntoView(false);
       } else {
         let selected = this.#multiselect.querySelector(`.multiselect__options ul li.arrow-selected`);
         const action = {
@@ -335,7 +336,7 @@ class IconicMultiSelect {
 
         if (!selected) {
           optionsContainerList.firstElementChild.classList.add("arrow-selected");
-          optionsContainerList.firstElementChild.scrollIntoView();
+          optionsContainerList.firstElementChild.scrollIntoView(false);
           return;
         }
 
