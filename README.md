@@ -5,7 +5,13 @@
 <p align="center">A multiselect component written in pure JavaScript - Also compatible with IE11</p>
 
 <p align="center">
-  <img src="./assets/iconic-multiselect.png">
+  <img src="./assets/iconic-multiselect.png" width="440">
+</p>
+
+<p align="center">Multiselect with a custom template</p>
+
+<p align="center">
+  <img src="./assets/iconic-multiselect-custom-template.png" width="440">
 </p>
 
 ### :rocket: [Try live demo](https://sidneywm.github.io/iconic-multiselect/)
@@ -14,14 +20,11 @@
 
 ### 1. Link the required files
 
-Firstly, the script needs to be included in your HTML file. If you would like to personalize the Iconic Multiselect component, you can additionally include a CSS stylesheet with your custom CSS properties which target the Iconic Multiselect component classes. Also, do not forget to set `customCss` to `true`. ([see configuration](#configuration))
+Firstly, the script and the CSS stylesheet need to be included in your HTML file. The `multi-select.css` file can be modified to change the default theme of the component.
 
 ```html
 <head>
-
-  // Optional 
   <link rel="stylesheet" href="multi-select.css" type="text/css" />
-
 </head>
 
 <script src="multi-select.js" type="text/javascript"></script>
@@ -33,12 +36,12 @@ Secondly, within your HTML file, create a `<select>` tag which you want to turn 
 
 ```html
 <select id="foods">
-    <option value="bread">Bread</option>
-    <option value="cereal">Cereal</option>
-    <option value="pasta">Pasta</option>
-    <option value="rice">Rice</option>
-    <option value="meat">Meat</option>
-    <option value="fish">Fish</option>
+  <option value="bread">Bread</option>
+  <option value="cereal">Cereal</option>
+  <option value="pasta">Pasta</option>
+  <option value="rice">Rice</option>
+  <option value="meat">Meat</option>
+  <option value="fish">Fish</option>
 </select>
 ```
 
@@ -48,54 +51,58 @@ Finally, target the `id` of your `<select>` tag in the options and initialize th
 
 ```html
 <script type="text/javascript">
+  const multiSelect = new IconicMultiSelect({
+    select: "#foods",
+  });
 
-    const multiSelect = new IconicMultiSelect({
-      select: "#foods",
-    });
-
-    multiSelect.init();
-
+  multiSelect.init();
 </script>
 ```
+
 ## Configuration
 
 ### 1. Overview
 
-| Option       | Default              | Type          |
-| :---         |     :---:            |     :---:     |
-| customCss    | `false`              | `boolean`     |
-| data         | `[]`                 | `Object[]`    |
-| noData       | `No data found.`     | `string`      |
-| noResults    | `No results found.`  | `string`      |
-| placeholder  | `Select...`          | `string`      |
-| select*      | `none`               | `string`      |
-| textField    | `null`               | `string`      |
-| valueField   | `null`               | `string`      |
+| Option       |       Default       |    Type    |
+| :----------- | :-----------------: | :--------: |
+| data         |        `[]`         | `Object[]` |
+| itemTemplate |       `null`        |  `string`  |
+| noData       |  `No data found.`   |  `string`  |
+| noResults    | `No results found.` |  `string`  |
+| placeholder  |     `Select...`     |  `string`  |
+| select\*     |       `none`        |  `string`  |
+| textField    |       `null`        |  `string`  |
+| tagTemplate  |       `null`        |  `string`  |
+| valueField   |       `null`        |  `string`  |
 
 \* This option is compulsory
 
-#### `customCss`
-If set to `true`, the component will not inject its own CSS in the `<head>` tag.
-
 #### `data*`
+
 The component can be configured with data set in the configuration fields. It must be an `Array` of `Objects`.
 
 #### `noData`
+
 Text to display if there is no data found in the `<select>` tag or in the data field.
 
 #### `noResults`
+
 Text to display if there is no results when the option list is filtered.
 
 #### `placeholder`
+
 Text to display in the input placeholder.
 
 #### `select`
+
 The `<select>` tag from which the component is initialized.
 
 #### `textField`
+
 The field of the data object that provides the text content.
 
 #### `valueField`
+
 The field of the data object that provides the value.
 
 \* **IMPORTANT:** When `data` is provided, `valueField` and `textField` should also be set.
@@ -103,51 +110,70 @@ The field of the data object that provides the value.
 ### 2. Example
 
 ```html
-  <script type="text/javascript">
+// Default template
+<script type="text/javascript">
+  const multiSelect = new IconicMultiSelect({
+    customCss: true,
+    data: [
+      { valueName: "bread", itemName: "Bread" },
+      { valueName: "rice", itemName: "Rice" },
+      { valueName: "pasta", itemName: "Pasta" },
+    ],
+    noData: "No food item found.",
+    noResults: "No results found in this list.",
+    placeholder: "Select a food item...",
+    select: "#foods",
+    textField: "itemName",
+    valueField: "valueName",
+  });
+</script>
 
-    const multiSelect = new IconicMultiSelect({
-      customCss: true,
-      data: [
-        { valueName: "bread", itemName: 'Bread'}, 
-        { valueName: "rice", itemName: 'Rice'}, 
-        { valueName: "pasta", itemName: 'Pasta'}
-      ],
-      noData: "No food item found.",
-      noResults: "No results found in this list.",
-      placeholder: "Select a food item...",
-      select: "#foods",
-      textField: 'itemName',
-      valueField: 'valueName',
-    });
-
-  </script>
+// Custom template
+<script type="text/javascript">
+  const multiSelect = new IconicMultiSelect({
+    select: "#employees",
+    data: [
+      { text: "John Doe", value: "john_doe", imageUrl: "face1.png", location: "New York, USA" },
+      { text: "Clara Smith", value: "clara_smith", imageUrl: "face2.jpg", location: "Paris, France" },
+      { text: "Morgane Amroc", value: "morgane_amroc", imageUrl: "face3.png", location: "Milan, Italy" },
+      { text: "Peter Goldenfield", value: "peter_goldenfield", imageUrl: "face4.jpg", location: "Los Angeles, USA" },
+    ],
+    valueField: "value",
+    textField: "text",
+    tagTemplate:
+      '<div class="demo-tag-template"><span class="demo-tag-template__img" style="background-image: url(./${imageUrl});"></span> ${text}</div>',
+    itemTemplate:
+      '<div class="demo-template"><span class="demo-template__img" style="background-image: url(./${imageUrl});"></span> ${text} - ${location}</div>',
+    placeholder: "Select an employee...",
+  });
+</script>
 ```
 
 ## Methods
 
 #### `.init()`
+
 Initialize the component with all its settings.
 
 #### `.subscribe()`
+
 Listen for all events.
 
-Example: 
+Example:
 
 ```javascript
-JavaScript:
+JavaScript: 
 
-multiSelect.subscribe(function(event) {
+multiSelect.subscribe(function (event) {
   console.log(event);
 });
-
 ```
 
-```console 
+```console
 Console:
 
 Object : { action: "ADD_OPTION", value: "pasta", selection: (1) [...] }
 ```
-
 
 ## Contributing
 
