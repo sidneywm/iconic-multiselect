@@ -2,13 +2,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Version](https://img.shields.io/github/package-json/v/sidneywm/iconic-multiselect)](https://github.com/sidneywm/iconic-multiselect)
 
-<p align="center">A multiselect component written in pure JavaScript - Also compatible with IE11</p>
+<p align="center"><b>A multiselect component written in pure JavaScript - Also compatible with IE11</b></p>
+
+<p align="center">Default template:</p>
 
 <p align="center">
   <img src="./assets/iconic-multiselect.png" width="440">
 </p>
 
-<p align="center">Multiselect with a custom template</p>
+<p align="center">Custom template:</p>
 
 <p align="center">
   <img src="./assets/iconic-multiselect-custom-template.png" width="440">
