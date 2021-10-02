@@ -21,7 +21,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /*!
- * IconicMultiSelect v0.6.1
+ * IconicMultiSelect v0.7.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
@@ -88,6 +88,7 @@ var IconicMultiSelect = function () {
     value: function init() {
       if (this._selectContainer && this._selectContainer.nodeName === "SELECT") {
         if (this._itemTemplate && this._data.length === 0) throw new Error("itemTemplate must be initialized with data from the component settings");
+        if (this._tagTemplate && this._data.length === 0) throw new Error("tagTemplate must be initialized with data from the component settings");
         this._options = this._data.length > 0 ? this._getDataFromSettings() : this._getDataFromSelectTag();
 
         this._renderMultiselect();
@@ -121,6 +122,8 @@ var IconicMultiSelect = function () {
         };
 
         this._enableEventListenners();
+
+        this._initSelectedList();
       } else {
         throw new Error("The selector '".concat(this._select, "' did not select any valid select tag."));
       }
@@ -308,9 +311,11 @@ var IconicMultiSelect = function () {
       var options = this._selectContainer.options;
 
       for (var i = 0; i < options.length; i++) {
+        var item = options[i];
         arr.push({
-          text: options[i].text,
-          value: options[i].value
+          text: item.text,
+          value: item.value,
+          selected: item.hasAttribute('selected')
         });
       }
 
@@ -332,7 +337,8 @@ var IconicMultiSelect = function () {
           var item = this._data[i];
           arr.push({
             value: item[this._valueField],
-            text: item[this._textField]
+            text: item[this._textField],
+            selected: typeof item.selected === "boolean" ? item.selected : false
           });
         }
 
@@ -489,6 +495,38 @@ var IconicMultiSelect = function () {
       }
     }
   }, {
+    key: "_initSelectedList",
+    value: function _initSelectedList() {
+      var _this5 = this;
+
+      var hasItemsSelected = false;
+
+      var _loop2 = function _loop2(i) {
+        var option = _this5._options[i];
+
+        if (option.selected) {
+          hasItemsSelected = true;
+
+          var target = _this5._domElements.options.find(function (el) {
+            return el.dataset.value == option.value;
+          });
+
+          target.classList.add("multiselect__options--selected");
+          _this5._selectedOptions = [].concat(_toConsumableArray(_this5._selectedOptions), [option]);
+
+          _this5._addOptionToList(option, i);
+        }
+      };
+
+      for (var i = 0; i < this._options.length; i++) {
+        _loop2(i);
+      }
+
+      if (hasItemsSelected) this._handleClearSelectionBtn();
+
+      this._handlePlaceholder();
+    }
+  }, {
     key: "_processTemplate",
     value: function _processTemplate(template, index) {
       var processedTemplate = template;
@@ -526,12 +564,12 @@ var IconicMultiSelect = function () {
   }, {
     key: "_renderOptionsList",
     value: function _renderOptionsList() {
-      var _this5 = this;
+      var _this6 = this;
 
       var html = "\n        <div class=\"multiselect__options\">\n          <ul>\n          ".concat(this._options.length > 0 && !this._itemTemplate ? this._options.map(function (option) {
         return "\n              <li data-value=\"".concat(option.value, "\">").concat(option.text, "</li>\n            ");
       }).join("") : "", "\n\n          ").concat(this._options.length > 0 && this._itemTemplate ? this._options.map(function (option, index) {
-        return "\n              <li data-value=\"".concat(option.value, "\">").concat(_this5._processTemplate(_this5._itemTemplate, index), "</li>\n            ");
+        return "\n              <li data-value=\"".concat(option.value, "\">").concat(_this6._processTemplate(_this6._itemTemplate, index), "</li>\n            ");
       }).join("") : "", "\n          ").concat(this._showNoData(this._options.length === 0), "\n          </ul>\n        </div>\n      ");
 
       this._multiselect.insertAdjacentHTML("beforeend", html);

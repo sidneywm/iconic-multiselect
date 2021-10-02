@@ -35,12 +35,13 @@ Firstly, the script and the CSS stylesheet need to be included in your HTML file
 ### 2. Create a select tag
 
 Secondly, within your HTML file, create a `<select>` tag which you want to turn into a multiselect. Do not forget to set an `id` on your `<select>` tag.
+If the attribute `selected` is set in one (or more) of your options, the option(s) will be automatically added to the selected options at initialization.
 
 ```html
 <select id="foods">
   <option value="bread">Bread</option>
-  <option value="cereal">Cereal</option>
-  <option value="pasta">Pasta</option>
+  <option selected value="cereal">Cereal</option>
+  <option selected value="pasta">Pasta</option>
   <option value="rice">Rice</option>
   <option value="meat">Meat</option>
   <option value="fish">Fish</option>
@@ -82,6 +83,7 @@ Finally, target the `id` of your `<select>` tag in the options and initialize th
 #### `data*`
 
 The component can be configured with data set in the configuration fields. It must be an `Array` of `Objects`.
+If a property named `selected` is set to `true` in one of your object, the option will be automatically added to the selected options at initialization.
 
 #### `itemTemplate`
 

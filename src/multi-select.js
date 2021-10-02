@@ -1,11 +1,11 @@
 /*!
- * IconicMultiSelect v0.6.1
+ * IconicMultiSelect v0.7.0
  * Licence:  MIT
  * (c) 2021 Sidney Wimart.
  */
 
 /**
- * @version IconicMultiSelect v0.6.1
+ * @version IconicMultiSelect v0.7.0
  * @licence  MIT
  */
 
@@ -71,6 +71,8 @@ class IconicMultiSelect {
     if (this._selectContainer && this._selectContainer.nodeName === "SELECT") {
       if (this._itemTemplate && this._data.length === 0)
         throw new Error("itemTemplate must be initialized with data from the component settings");
+      if (this._tagTemplate && this._data.length === 0)
+        throw new Error("tagTemplate must be initialized with data from the component settings");
 
       this._options = this._data.length > 0 ? this._getDataFromSettings() : this._getDataFromSelectTag();
 
@@ -102,6 +104,7 @@ class IconicMultiSelect {
       };
 
       this._enableEventListenners();
+      this._initSelectedList()
     } else {
       throw new Error(`The selector '${this._select}' did not select any valid select tag.`);
     }
@@ -275,9 +278,11 @@ class IconicMultiSelect {
     const arr = [];
     const { options } = this._selectContainer;
     for (let i = 0; i < options.length; i++) {
+      const item = options[i]
       arr.push({
-        text: options[i].text,
-        value: options[i].value,
+        text: item.text,
+        value: item.value,
+        selected: item.hasAttribute('selected')
       });
     }
     return arr;
@@ -302,6 +307,7 @@ class IconicMultiSelect {
         arr.push({
           value: item[this._valueField],
           text: item[this._textField],
+          selected: typeof item.selected === "boolean" ? item.selected : false
         });
       }
       return arr;
@@ -464,6 +470,25 @@ class IconicMultiSelect {
     } else {
       this._domElements.input.placeholder = this._placeholder;
     }
+  }
+
+  _initSelectedList() {
+    let hasItemsSelected = false;
+
+    for (let i = 0; i < this._options.length; i++) {
+      const option = this._options[i];
+      if (option.selected) {
+        hasItemsSelected = true;
+        const target = this._domElements.options.find((el) => el.dataset.value == option.value)
+        target.classList.add(`multiselect__options--selected`);
+        this._selectedOptions = [...this._selectedOptions, option];
+        this._addOptionToList(option, i);
+      }
+    }
+
+    if (hasItemsSelected)
+      this._handleClearSelectionBtn();
+      this._handlePlaceholder();
   }
 
   /**
