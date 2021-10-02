@@ -83,6 +83,11 @@ Finally, target the `id` of your `<select>` tag in the options and initialize th
 
 The component can be configured with data set in the configuration fields. It must be an `Array` of `Objects`.
 
+#### `itemTemplate`
+
+This option allows to define a custom template for the items rendered in the popup list.
+Custom item template can contains placeholders. These are indicated with a dollar sign and curly braces (`${your_item_property_name}`).
+
 #### `noData`
 
 Text to display if there is no data found in the `<select>` tag or in the data field.
@@ -98,6 +103,11 @@ Text to display in the input placeholder.
 #### `select`
 
 The `<select>` tag from which the component is initialized.
+
+#### `tagTemplate`
+
+This option allows to define a custom template for the tags rendered in the input list.
+Custom tag template can contains placeholders. These are indicated with a dollar sign and curly braces (`${your_item_property_name}`).
 
 #### `textField`
 
