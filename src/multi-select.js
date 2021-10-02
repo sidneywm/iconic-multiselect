@@ -317,7 +317,7 @@ class IconicMultiSelect {
    */
   _handleArrows(event) {
     if (event.keyCode === 40 || event.keyCode === 38) {
-      event.preventDefault()
+      event.preventDefault();
       const isOpen = this._domElements.optionsContainer.classList.contains("visible");
       // An updated view of the container is needed because of the filtering option
       const optionsContainerList = this._multiselect.querySelector(`.multiselect__options > ul`);
